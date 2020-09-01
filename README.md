@@ -2,7 +2,7 @@
 
 # Updating a collection
 
-We recommend working in [virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/) before installing the python dependencies:
+We recommend working in a Python [virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/):
 
     $ make init
     $ make
