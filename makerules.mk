@@ -32,6 +32,9 @@ second-pass::
 init::
 	pip3 install --upgrade -r requirements.txt
 
+submodules::
+	git submodule update --init --recursive --remote
+
 # remove targets, force relink
 clobber::
 	@:
