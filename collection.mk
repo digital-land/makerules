@@ -24,3 +24,11 @@ collect:	$(SOURCE_CSV) $(ENDPOINT_CSV)
 
 clobber-today::
 	rm -rf $(LOG_FILES_TODAY)
+
+# create a link to the pipleline source
+dev::
+ifndef VIRTUAL_ENV
+	$(error not in a virtual environment)
+endif
+	rm -rf ${VIRTUAL_ENV}/src/digital-land
+	ln -s ${PWD}/../pipeline/ ${VIRTUAL_ENV}/src/digital-land
