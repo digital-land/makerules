@@ -11,4 +11,4 @@ check::	bin/check.py $(SPECIFICATION_FILES)
 
 # update makerules from source
 update::
-	curl -qsL '$(SOURCE_URL)/makerules/specification.mk' > makerules/specification.mk
+	curl -qsL '$(SOURCE_URL)/makerules/master/specification.mk' > makerules/specification.mk

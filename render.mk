@@ -21,4 +21,4 @@ clobber clean::
 
 # update makerules from source
 update::
-	curl -qsL '$(SOURCE_URL)/makerules/render.mk' > makerules/render.mk
+	curl -qsL '$(SOURCE_URL)/makerules/master/render.mk' > makerules/render.mk
