@@ -18,3 +18,7 @@ server:
 
 clobber clean::
 	rm -rf ./docs/ .cache/
+
+# update makerules from source
+update::
+	curl -qsL '$(SOURCE_URL)/makerules/render.mk' > makerules/render.mk

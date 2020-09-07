@@ -32,3 +32,7 @@ ifndef VIRTUAL_ENV
 endif
 	rm -rf ${VIRTUAL_ENV}/src/digital-land
 	ln -s ${PWD}/../pipeline/ ${VIRTUAL_ENV}/src/digital-land
+
+# update makerules from source
+update::
+	curl -qsL '$(SOURCE_URL)/makerules/collection.mk' > makerules/collection.mk
