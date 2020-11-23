@@ -17,7 +17,12 @@ LOG_FILES_TODAY:=$(LOG_DIR)$(shell date +%Y-%m-%d)/
 
 first-pass:: collect
 
-collect:	$(SOURCE_CSV) $(ENDPOINT_CSV)
+second-pass:: collection/log.csv
+
+collection/log.csv:
+	digital-land collection-save-csv
+
+collect: $(SOURCE_CSV) $(ENDPOINT_CSV)
 	digital-land collect $(ENDPOINT_CSV)
 
 clobber-today::
