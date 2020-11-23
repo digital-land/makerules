@@ -52,3 +52,14 @@ prune::
 # update makerules from source
 update::
 	curl -qsL '$(SOURCE_URL)/makerules/master/makerules.mk' > makerules/makerules.mk
+
+# update local copies of specification files
+update::
+	@mkdir -p specification/
+	curl -qsL '$(SOURCE_URL)/specification/master/specification/dataset.csv' > specification/dataset.csv
+	curl -qsL '$(SOURCE_URL)/specification/master/specification/dataset-schema.csv' > specification/dataset-schema.csv
+	curl -qsL '$(SOURCE_URL)/specification/master/specification/schema.csv' > specification/schema.csv
+	curl -qsL '$(SOURCE_URL)/specification/master/specification/schema-field.csv' > specification/schema-field.csv
+	curl -qsL '$(SOURCE_URL)/specification/master/specification/field.csv' > specification/field.csv
+	curl -qsL '$(SOURCE_URL)/specification/master/specification/datatype.csv' > specification/datatype.csv
+	curl -qsL '$(SOURCE_URL)/specification/master/specification/typology.csv' > specification/typology.csv
