@@ -1,6 +1,9 @@
 .PHONY: \
 	pipeline\
-	convert
+	convert\
+	normalise\
+	harmonise\
+	transform
 
 # data sources
 # collected resources
@@ -50,7 +53,7 @@ $(FIXED_CONVERTED_FILES):
 	@mkdir -p $(CONVERTED_DIR)
 	digital-land convert $(subst $(CONVERTED_DIR),$(FIXED_DIR),$@) $@
 
-convert: $(CONVERTED_FILES)
+convert:: $(CONVERTED_FILES)
 	@:
 
 
@@ -64,7 +67,7 @@ $(NORMALISED_DIR)%.csv: $(CONVERTED_DIR)%.csv
 	@mkdir -p $(NORMALISED_DIR)
 	digital-land --pipeline-name $(PIPELINE_NAME) normalise $< $@
 
-normalise: $(NORMALISED_FILES)
+normalise:: $(NORMALISED_FILES)
 	@:
 
 
@@ -78,7 +81,7 @@ $(MAPPED_DIR)%.csv: $(NORMALISED_DIR)%.csv $(PIPELINE_DIR)
 	@mkdir -p $(MAPPED_DIR)
 	digital-land --pipeline-name $(PIPELINE_NAME) map $< $@
 
-map: $(MAPPED_FILES)
+map:: $(MAPPED_FILES)
 	@:
 
 
@@ -99,7 +102,7 @@ $(HARMONISED_DIR)%.csv: $(MAPPED_DIR)%.csv $(HARMONISE_DATA)
 	@mkdir -p $(HARMONISED_DIR) $(ISSUE_DIR)
 	digital-land --pipeline-name $(PIPELINE_NAME) harmonise --use-patch-callback $< $@
 
-harmonise: $(HARMONISED_FILES)
+harmonise:: $(HARMONISED_FILES)
 	@:
 
 
@@ -113,7 +116,7 @@ $(TRANSFORMED_DIR)%.csv: $(HARMONISED_DIR)%.csv
 	@mkdir -p $(TRANSFORMED_DIR)
 	digital-land --pipeline-name $(PIPELINE_NAME) transform $< $@
 
-transform: $(TRANSFORMED_FILES)
+transform:: $(TRANSFORMED_FILES)
 	@:
 
 
