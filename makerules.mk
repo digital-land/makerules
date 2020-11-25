@@ -6,6 +6,9 @@ SOURCE_URL=https://raw.githubusercontent.com/digital-land/
 	second-pass\
 	clobber\
 	clean\
+	commit-update\
+	commit-resources\
+	commit-data\
 	prune
 
 # keep intermediate files
@@ -20,6 +23,9 @@ LANG := C.UTF-8
 
 # for consistent collation on different machines
 LC_COLLATE := C.UTF-8
+
+# current git branch
+BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 all:: first-pass second-pass
 
@@ -63,3 +69,13 @@ update::
 	curl -qsL '$(SOURCE_URL)/specification/master/specification/field.csv' > specification/field.csv
 	curl -qsL '$(SOURCE_URL)/specification/master/specification/datatype.csv' > specification/datatype.csv
 	curl -qsL '$(SOURCE_URL)/specification/master/specification/typology.csv' > specification/typology.csv
+
+commit-update::
+	git add makerules
+	git diff --quiet && git diff --staged --quiet || (git commit -m "Updated makerules $(shell date +%F)"; git push origin $(BRANCH))
+
+commit-resources::
+	@:
+
+commit-data::
+	@:
