@@ -131,5 +131,5 @@ update::
 	curl -qsL '$(SOURCE_URL)/makerules/master/pipeline.mk' > makerules/pipeline.mk
 
 commit-data::
-	git add data
+	git add transformed issue data
 	git diff --quiet && git diff --staged --quiet || (git commit -m "Data $(shell date +%F)"; git push origin $(BRANCH))
