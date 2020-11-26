@@ -95,12 +95,12 @@ HARMONISE_DATA=\
 	$(CACHE_DIR)/organisation.csv
 
 # a file of issues is produced for each resource
-ISSUE_DIR=var/issue/
+ISSUE_DIR=issue/
 ISSUE_FILES := $(subst $(CONVERTED_DIR),$(ISSUE_DIR),$(CONVERTED_FILES))
 
 $(HARMONISED_DIR)%.csv: $(MAPPED_DIR)%.csv $(HARMONISE_DATA)
 	@mkdir -p $(HARMONISED_DIR) $(ISSUE_DIR)
-	digital-land --pipeline-name $(PIPELINE_NAME) harmonise --use-patch-callback $< $@
+	digital-land --pipeline-name $(PIPELINE_NAME) harmonise --use-patch-callback --issue-path $(ISSUE_DIR) $< $@
 
 harmonise:: $(HARMONISED_FILES)
 	@:
@@ -109,7 +109,7 @@ harmonise:: $(HARMONISED_FILES)
 #
 #  transform older fields into the latest model
 #
-TRANSFORMED_DIR=var/transformed/
+TRANSFORMED_DIR=transformed/
 TRANSFORMED_FILES:= $(subst $(CONVERTED_DIR),$(TRANSFORMED_DIR),$(CONVERTED_FILES))
 
 $(TRANSFORMED_DIR)%.csv: $(HARMONISED_DIR)%.csv
