@@ -5,6 +5,7 @@ ifndef GDAL
 ifeq ($(UNAME),Darwin)
 $(error GDAL tools not found in PATH)
 endif
+	sufo apt-get update
 	sudo apt-get install gdal-bin
 endif
 
