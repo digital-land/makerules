@@ -3,7 +3,8 @@
 	convert\
 	normalise\
 	harmonise\
-	transform
+	transform\
+	dataset
 
 # data sources
 # collected resources
@@ -119,6 +120,8 @@ $(TRANSFORMED_DIR)%.csv: $(HARMONISED_DIR)%.csv
 transform:: $(TRANSFORMED_FILES)
 	@:
 
+dataset::
+	@:
 
 # local copies of datasets
 $(CACHE_DIR)/organisation.csv:
