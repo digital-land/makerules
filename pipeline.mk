@@ -1,5 +1,4 @@
 .PHONY: \
-	pipeline\
 	convert\
 	normalise\
 	harmonise\
@@ -29,11 +28,9 @@ ifeq ($(CACHE_DIR),)
 CACHE_DIR=var/cache
 endif
 
+# restart the make process to pick-up collected resource files
 second-pass::
-	@$(MAKE) --no-print-directory pipeline
-
-# restart the make process to pick-up collected files
-pipeline::	transform
+	@$(MAKE) --no-print-directory dataset
 
 
 #
@@ -121,7 +118,7 @@ $(TRANSFORMED_DIR)%.csv: $(HARMONISED_DIR)%.csv
 transform:: $(TRANSFORMED_FILES)
 	@:
 
-dataset::
+dataset:: $(TRANSFORMED_FILES)
 	@:
 
 # local copies of datasets
