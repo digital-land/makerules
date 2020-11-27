@@ -1,14 +1,14 @@
 SOURCE_URL=https://raw.githubusercontent.com/digital-land/
 
 .PHONY: \
+	makerules\
 	init\
 	first-pass\
 	second-pass\
 	clobber\
 	clean\
-	commit-update\
+	commit-makerules\
 	commit-resources\
-	commit-data\
 	prune
 
 # keep intermediate files
@@ -56,11 +56,11 @@ prune::
 	rm -rf ./var $(VALIDATION_DIR)
 
 # update makerules from source
-update::
+makerules::
 	curl -qsL '$(SOURCE_URL)/makerules/master/makerules.mk' > makerules/makerules.mk
 
 # update local copies of specification files
-update::
+init::
 	@mkdir -p specification/
 	curl -qsL '$(SOURCE_URL)/specification/master/specification/dataset.csv' > specification/dataset.csv
 	curl -qsL '$(SOURCE_URL)/specification/master/specification/dataset-schema.csv' > specification/dataset-schema.csv
@@ -70,12 +70,9 @@ update::
 	curl -qsL '$(SOURCE_URL)/specification/master/specification/datatype.csv' > specification/datatype.csv
 	curl -qsL '$(SOURCE_URL)/specification/master/specification/typology.csv' > specification/typology.csv
 
-commit-update::
+commit-makerules::
 	git add makerules
 	git diff --quiet && git diff --staged --quiet || (git commit -m "Updated makerules $(shell date +%F)"; git push origin $(BRANCH))
 
-commit-resources::
-	@:
-
-commit-data::
+commit-collection::
 	@:

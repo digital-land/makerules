@@ -29,9 +29,9 @@ clobber-today::
 	rm -rf $(LOG_FILES_TODAY)
 
 # update makerules from source
-update::
+makerules::
 	curl -qsL '$(SOURCE_URL)/makerules/master/collection.mk' > makerules/collection.mk
 
-commit-resources::
+commit-collection::
 	git add collection
 	git diff --quiet && git diff --staged --quiet || (git commit -m "Collection $(shell date +%F)"; git push origin $(BRANCH))

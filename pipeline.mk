@@ -4,7 +4,8 @@
 	normalise\
 	harmonise\
 	transform\
-	dataset
+	dataset\
+	commit-dataset
 
 # data sources
 # collected resources
@@ -129,10 +130,9 @@ $(CACHE_DIR)/organisation.csv:
 	curl -qs "https://raw.githubusercontent.com/digital-land/organisation-dataset/master/collection/organisation.csv" > $@
 
 
-# update makerules from source
-update::
+makerules::
 	curl -qsL '$(SOURCE_URL)/makerules/master/pipeline.mk' > makerules/pipeline.mk
 
-commit-data::
-	git add transformed issue data
+commit-dataset::
+	git add transformed issue dataset
 	git diff --quiet && git diff --staged --quiet || (git commit -m "Data $(shell date +%F)"; git push origin $(BRANCH))
