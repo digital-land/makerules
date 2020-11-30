@@ -165,11 +165,11 @@ dataset:: $(NATIONAL_DATASET)
 # local copies of datasets
 $(CACHE_DIR)/organisation.csv:
 	@mkdir -p $(CACHE_DIR)
-	curl -qs "https://raw.githubusercontent.com/digital-land/organisation-dataset/master/collection/organisation.csv" > $@
+	curl -qs "https://raw.githubusercontent.com/digital-land/organisation-dataset/main/collection/organisation.csv" > $@
 
 
 makerules::
-	curl -qsL '$(SOURCE_URL)/makerules/master/pipeline.mk' > makerules/pipeline.mk
+	curl -qsL '$(SOURCE_URL)/makerules/main/pipeline.mk' > makerules/pipeline.mk
 
 commit-dataset::
 	git add transformed issue dataset

@@ -11,4 +11,4 @@ endif
 endif
 
 makerules::
-	curl -qsL '$(SOURCE_URL)/makerules/master/geospatial.mk' > makerules/geospatial.mk
+	curl -qsL '$(SOURCE_URL)/makerules/main/geospatial.mk' > makerules/geospatial.mk
