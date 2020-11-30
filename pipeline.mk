@@ -131,7 +131,7 @@ PIPELINED_DIR=transformed/
 PIPELINED_FILES := $(addsuffix .csv,$(subst $(RESOURCE_DIR),$(PIPELINED_DIR),$(RESOURCE_FILES)))
 
 $(PIPELINED_DIR)%.csv: $(RESOURCE_DIR)%
-	@mkdir -p $(PIPELINED_DIR)
+	@mkdir -p $(PIPELINED_DIR) $(ISSUE_DIR)
 	digital-land --pipeline-name $(PIPELINE_NAME) pipeline --issue-path issue/ --use-patch-callback $< $@
 
 # fixed resources which can't be converted automatically
@@ -139,7 +139,7 @@ FIXED_FILES:=$(wildcard $(FIXED_DIR)*.csv)
 FIXED_PIPELINED_FILES:=$(subst $(FIXED_DIR),$(PIPELINED_DIR),$(FIXED_FILES))
 
 $(FIXED_PIPELINED_FILES):
-	@mkdir -p $(PIPELINED_DIR)
+	@mkdir -p $(PIPELINED_DIR) $(ISSUE_DIR)
 	digital-land --pipeline-name $(PIPELINE_NAME) pipeline --issue-path issue/ --use-patch-callback $(subst $(PIPELINED_DIR),$(FIXED_DIR),$@) $@
 
 pipeline:: $(PIPELINED_FILES)
