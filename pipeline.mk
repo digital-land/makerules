@@ -6,6 +6,11 @@
 	dataset\
 	commit-dataset
 
+# produced dataset
+ifeq ($(DATASET_DIR),)
+DATASET_DIR=dataset/
+endif
+
 # data sources
 # collected resources
 ifeq ($(COLLECTION_DIR),)
@@ -141,9 +146,21 @@ pipeline:: $(PIPELINED_FILES)
 	@:
 
 
-dataset:: $(PIPELINED_FILES)
-	@mkdir -p dataset
-	@:
+#
+#  national dataset from transformed resources
+#  - temporarily uses csvkit to concatenate the files
+#
+NATIONAL_DATASET=$(DATASET_DIR)/$(PIPELINE_NAME).csv
+
+init::
+	pip install csvkit
+
+$(NATIONAL_DATASET): $(PIPELINED_FILES)
+	@mkdir -p $(DATASET_DIR)
+	csvstack -z $(shell python -c 'print(__import__("sys").maxsize)') --filenames -n resource $(PIPELINED_FILES) | sed 's/^\([^\.]*\).csv,/\1,/' > $@
+
+dataset:: $(NATIONAL_DATASET)
+
 
 # local copies of datasets
 $(CACHE_DIR)/organisation.csv:
