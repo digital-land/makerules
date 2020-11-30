@@ -157,7 +157,7 @@ init::
 
 $(NATIONAL_DATASET): $(PIPELINED_FILES)
 	@mkdir -p $(DATASET_DIR)
-	csvstack -z $(shell python -c 'print(__import__("sys").maxsize)') --filenames -n resource $(PIPELINED_FILES) | sed 's/^\([^\.]*\).csv,/\1,/' > $@
+	csvstack -z $(shell python -c 'print(__import__("sys").maxsize)') --filenames -n resource $(PIPELINED_FILES) < /dev/null | sed 's/^\([^\.]*\).csv,/\1,/' > $@
 
 dataset:: $(NATIONAL_DATASET)
 
