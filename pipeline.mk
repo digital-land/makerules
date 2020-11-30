@@ -130,7 +130,7 @@ transform:: $(TRANSFORMED_FILES)
 PIPELINED_DIR=transformed/
 PIPELINED_FILES := $(addsuffix .csv,$(subst $(RESOURCE_DIR),$(PIPELINED_DIR),$(RESOURCE_FILES)))
 
-$(PIPELINED_DIR)%.csv: $(RESOURCE_DIR)%
+$(PIPELINED_DIR)%.csv: $(RESOURCE_DIR)% $(HARMONISE_DATA)
 	@mkdir -p $(PIPELINED_DIR) $(ISSUE_DIR)
 	digital-land --pipeline-name $(PIPELINE_NAME) pipeline --issue-path issue/ --use-patch-callback $< $@
 
@@ -138,7 +138,7 @@ $(PIPELINED_DIR)%.csv: $(RESOURCE_DIR)%
 FIXED_FILES:=$(wildcard $(FIXED_DIR)*.csv)
 FIXED_PIPELINED_FILES:=$(subst $(FIXED_DIR),$(PIPELINED_DIR),$(FIXED_FILES))
 
-$(FIXED_PIPELINED_FILES):
+$(FIXED_PIPELINED_FILES): $(HARMONISE_DATA)
 	@mkdir -p $(PIPELINED_DIR) $(ISSUE_DIR)
 	digital-land --pipeline-name $(PIPELINE_NAME) pipeline --issue-path issue/ --use-patch-callback $(subst $(PIPELINED_DIR),$(FIXED_DIR),$@) $@
 
