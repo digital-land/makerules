@@ -45,7 +45,6 @@ $(CONVERTED_DIR)%.csv: $(RESOURCE_DIR)%
 
 # resources which can't be converted automatically
 FIXED_FILES:=$(wildcard $(FIXED_DIR)*.csv)
-
 FIXED_CONVERTED_FILES:=$(subst $(FIXED_DIR),$(CONVERTED_DIR),$(FIXED_FILES))
 
 $(FIXED_CONVERTED_FILES):
@@ -108,7 +107,7 @@ harmonise:: $(HARMONISED_FILES)
 #
 #  transform older fields into the latest model
 #
-TRANSFORMED_DIR=transformed/
+TRANSFORMED_DIR=var/transformed/
 TRANSFORMED_FILES:= $(subst $(CONVERTED_DIR),$(TRANSFORMED_DIR),$(CONVERTED_FILES))
 
 $(TRANSFORMED_DIR)%.csv: $(HARMONISED_DIR)%.csv
@@ -119,7 +118,30 @@ transform:: $(TRANSFORMED_FILES)
 	@mkdir -p $(TRANSFORMED_DIR)
 	@:
 
-dataset:: $(TRANSFORMED_FILES)
+
+#
+#  transform collected or fixed resources in a single pipeline
+#
+PIPELINED_DIR=transformed/
+PIPELINED_FILES := $(addsuffix .csv,$(subst $(RESOURCE_DIR),$(PIPELINED_DIR),$(RESOURCE_FILES)))
+
+$(PIPELINED_DIR)%.csv: $(RESOURCE_DIR)%
+	@mkdir -p $(PIPELINED_DIR)
+	digital-land --pipeline-name $(PIPELINE_NAME) pipeline --issue-path issue/ $< $@
+
+# fixed resources which can't be converted automatically
+FIXED_FILES:=$(wildcard $(FIXED_DIR)*.csv)
+FIXED_PIPELINED_FILES:=$(subst $(FIXED_DIR),$(PIPELINED_DIR),$(FIXED_FILES))
+
+$(FIXED_PIPELINED_FILES):
+	@mkdir -p $(PIPELINED_DIR)
+	digital-land --pipeline-name $(PIPELINE_NAME) pipeline --issue-path issue/ $(subst $(PIPELINED_DIR),$(FIXED_DIR),$@) $@
+
+pipeline:: $(PIPELINED_FILES)
+	@:
+
+
+dataset:: $(PIPELINED_FILES)
 	@mkdir -p dataset
 	@:
 
