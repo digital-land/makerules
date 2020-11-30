@@ -30,7 +30,7 @@ FIXED_DIR=fixed/
 endif
 
 ifeq ($(CACHE_DIR),)
-CACHE_DIR=var/cache
+CACHE_DIR=var/cache/
 endif
 
 # restart the make process to pick-up collected resource files
@@ -94,14 +94,11 @@ map:: $(MAPPED_FILES)
 HARMONISED_DIR=var/harmonised/
 HARMONISED_FILES := $(subst $(CONVERTED_DIR),$(HARMONISED_DIR),$(CONVERTED_FILES))
 
-HARMONISE_DATA=\
-	$(CACHE_DIR)/organisation.csv
-
 # a file of issues is produced for each resource
 ISSUE_DIR=issue/
 ISSUE_FILES := $(subst $(CONVERTED_DIR),$(ISSUE_DIR),$(CONVERTED_FILES))
 
-$(HARMONISED_DIR)%.csv: $(MAPPED_DIR)%.csv $(HARMONISE_DATA)
+$(HARMONISED_DIR)%.csv: $(MAPPED_DIR)%.csv
 	@mkdir -p $(HARMONISED_DIR) $(ISSUE_DIR)
 	digital-land --pipeline-name $(PIPELINE_NAME) harmonise --use-patch-callback --issue-path $(ISSUE_DIR) $< $@
 
@@ -130,7 +127,7 @@ transform:: $(TRANSFORMED_FILES)
 PIPELINED_DIR=transformed/
 PIPELINED_FILES := $(addsuffix .csv,$(subst $(RESOURCE_DIR),$(PIPELINED_DIR),$(RESOURCE_FILES)))
 
-$(PIPELINED_DIR)%.csv: $(RESOURCE_DIR)% $(HARMONISE_DATA)
+$(PIPELINED_DIR)%.csv: $(RESOURCE_DIR)%
 	@mkdir -p $(PIPELINED_DIR) $(ISSUE_DIR)
 	digital-land --pipeline-name $(PIPELINE_NAME) pipeline --issue-path issue/ --use-patch-callback $< $@
 
@@ -138,7 +135,7 @@ $(PIPELINED_DIR)%.csv: $(RESOURCE_DIR)% $(HARMONISE_DATA)
 FIXED_FILES:=$(wildcard $(FIXED_DIR)*.csv)
 FIXED_PIPELINED_FILES:=$(subst $(FIXED_DIR),$(PIPELINED_DIR),$(FIXED_FILES))
 
-$(FIXED_PIPELINED_FILES): $(HARMONISE_DATA)
+$(FIXED_PIPELINED_FILES):
 	@mkdir -p $(PIPELINED_DIR) $(ISSUE_DIR)
 	digital-land --pipeline-name $(PIPELINE_NAME) pipeline --issue-path issue/ --use-patch-callback $(subst $(PIPELINED_DIR),$(FIXED_DIR),$@) $@
 
@@ -162,11 +159,10 @@ $(NATIONAL_DATASET): $(PIPELINED_FILES)
 dataset:: $(NATIONAL_DATASET)
 
 
-# local copies of datasets
-$(CACHE_DIR)/organisation.csv:
+# local copies of the organisation dataset needed by harmonise
+init::
 	@mkdir -p $(CACHE_DIR)
-	curl -qs "https://raw.githubusercontent.com/digital-land/organisation-dataset/main/collection/organisation.csv" > $@
-
+	curl -qs "https://raw.githubusercontent.com/digital-land/organisation-dataset/main/collection/organisation.csv" > $(CACHE_DIR)organisation.csv
 
 makerules::
 	curl -qsL '$(SOURCE_URL)/makerules/main/pipeline.mk' > makerules/pipeline.mk
