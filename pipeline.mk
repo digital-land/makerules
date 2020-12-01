@@ -158,6 +158,11 @@ $(NATIONAL_DATASET): $(PIPELINED_FILES)
 
 dataset:: $(NATIONAL_DATASET)
 
+clean::
+	rm -rf ./var
+
+clobber::
+	rm -f $(NATIONAL_DATASET)
 
 # local copies of the organisation dataset needed by harmonise
 init::
