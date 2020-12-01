@@ -103,7 +103,7 @@ ISSUE_FILES := $(subst $(CONVERTED_DIR),$(ISSUE_DIR),$(CONVERTED_FILES))
 
 $(HARMONISED_DIR)%.csv: $(MAPPED_DIR)%.csv $(HARMONISE_DATA)
 	@mkdir -p $(HARMONISED_DIR) $(ISSUE_DIR)
-	digital-land --pipeline-name $(PIPELINE_NAME) harmonise --use-patch-callback --issue-path $(ISSUE_DIR) $< $@
+	digital-land --pipeline-name $(PIPELINE_NAME) harmonise --issue-path $(ISSUE_DIR) $< $@
 
 harmonise:: $(HARMONISED_FILES)
 	@:
@@ -132,7 +132,7 @@ PIPELINED_FILES := $(addsuffix .csv,$(subst $(RESOURCE_DIR),$(PIPELINED_DIR),$(R
 
 $(PIPELINED_DIR)%.csv: $(RESOURCE_DIR)%
 	@mkdir -p $(PIPELINED_DIR) $(ISSUE_DIR)
-	digital-land --pipeline-name $(PIPELINE_NAME) pipeline --issue-path issue/ --use-patch-callback $< $@
+	digital-land --pipeline-name $(PIPELINE_NAME) pipeline --issue-path issue/ $< $@
 
 # fixed resources which can't be converted automatically
 FIXED_FILES:=$(wildcard $(FIXED_DIR)*.csv)
@@ -140,7 +140,7 @@ FIXED_PIPELINED_FILES:=$(subst $(FIXED_DIR),$(PIPELINED_DIR),$(FIXED_FILES))
 
 $(FIXED_PIPELINED_FILES):
 	@mkdir -p $(PIPELINED_DIR) $(ISSUE_DIR)
-	digital-land --pipeline-name $(PIPELINE_NAME) pipeline --issue-path issue/ --use-patch-callback $(subst $(PIPELINED_DIR),$(FIXED_DIR),$@) $@
+	digital-land --pipeline-name $(PIPELINE_NAME) pipeline --issue-path issue/ $(subst $(PIPELINED_DIR),$(FIXED_DIR),$@) $@
 
 pipeline:: $(PIPELINED_FILES)
 	@:
