@@ -33,6 +33,15 @@ ifeq ($(CACHE_DIR),)
 CACHE_DIR=var/cache/
 endif
 
+ifeq ($(PIPELINE_NAME),)
+PIPELINE_NAME=$(DATASET)
+endif
+
+ifeq ($(DATASET),)
+$(error missing DATASET or PIPELINE_NAME)
+endif
+
+
 # restart the make process to pick-up collected resource files
 second-pass::
 	@$(MAKE) --no-print-directory dataset
@@ -147,18 +156,25 @@ pipeline:: $(PIPELINED_FILES)
 #  national dataset from transformed resources
 #  - temporarily uses csvkit to concatenate the files
 #
-NATIONAL_DATASET=$(DATASET_DIR)/$(PIPELINE_NAME).csv
+# backwards compatability .
+ifeq ($(DATASET),)
+DATASET=$(PIPELINE_NAME)
+endif
+
+ifeq ($(DATASET_PATH),)
+DATASET_PATH=$(DATASET_DIR)/$(DATASET_NAME).csv
+endif
 
 init::
 	pip install csvkit
 
-$(NATIONAL_DATASET): $(PIPELINED_FILES)
+$(DATASET_PATH): $(PIPELINED_FILES)
 	@mkdir -p $(DATASET_DIR)
 	csvstack -z $(shell python -c 'print(__import__("sys").maxsize)') --filenames -n resource $(PIPELINED_FILES) < /dev/null | sed 's/^\([^\.]*\).csv,/\1,/' > $@
 
 dataset:: $(PIPELINED_FILES)
 
-dataset:: $(NATIONAL_DATASET)
+dataset:: $(DATASET_PATH)
 
 clean::
 	rm -rf ./var
