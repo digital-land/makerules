@@ -6,6 +6,18 @@
 	dataset\
 	commit-dataset
 
+ifeq ($(PIPELINE_NAME),)
+PIPELINE_NAME=$(DATASET)
+endif
+
+ifeq ($(DATASET),)
+DATASET=$(PIPELINE_NAME)
+endif
+
+ifeq ($(DATASET),)
+$(error missing DATASET or PIPELINE_NAME)
+endif
+
 # produced dataset
 ifeq ($(DATASET_DIR),)
 DATASET_DIR=dataset/
@@ -31,14 +43,6 @@ endif
 
 ifeq ($(CACHE_DIR),)
 CACHE_DIR=var/cache/
-endif
-
-ifeq ($(PIPELINE_NAME),)
-PIPELINE_NAME=$(DATASET)
-endif
-
-ifeq ($(DATASET),)
-$(error missing DATASET or PIPELINE_NAME)
 endif
 
 
@@ -156,11 +160,6 @@ pipeline:: $(PIPELINED_FILES)
 #  national dataset from transformed resources
 #  - temporarily uses csvkit to concatenate the files
 #
-# backwards compatability .
-ifeq ($(DATASET),)
-DATASET=$(PIPELINE_NAME)
-endif
-
 ifeq ($(DATASET_PATH),)
 DATASET_PATH=$(DATASET_DIR)/$(DATASET_NAME).csv
 endif
