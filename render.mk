@@ -17,7 +17,7 @@ second-pass:: render
 render: $(TEMPLATE_FILES) $(SPECIFICATION_FILES) $(DATASET_FILES)
 	@-rm -rf ./docs/
 	@-mkdir ./docs/
-	digital-land --pipeline-name brownfield-land render --dataset-path $(DATASET_PATH)
+	digital-land --pipeline-name $(DATASET) render --dataset-path $(DATASET_PATH)
 	@touch ./docs/.nojekyll
 
 # serve docs for testing
