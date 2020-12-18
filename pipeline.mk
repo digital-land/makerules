@@ -39,7 +39,7 @@ endif
 
 define run-pipeline =
 	mkdir -p $(@D) $(ISSUE_DIR)$(notdir $(@D))
-	digital-land --pipeline-name $(notdir $(@D)) pipeline --issue-dir $(ISSUE_DIR)$(notdir $(@D)) $< $@
+	digital-land --pipeline-name $(notdir $(@D)) pipeline --issue-dir $(ISSUE_DIR)$(notdir $(@D)) $(PIPELINE_FLAGS) $< $@
 endef
 
 define build-dataset =
