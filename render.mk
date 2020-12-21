@@ -37,7 +37,7 @@ server:
 	cd docs && python3 -m http.server
 
 clobber clean::
-	rm -rf ./docs/ .cache/
+	rm -rf $(DATASET_PATH) $(DOCS_DIR)
 
 makerules::
 	curl -qsL '$(SOURCE_URL)/makerules/main/render.mk' > makerules/render.mk
