@@ -2,16 +2,14 @@
 	render\
 	server
 
-ifeq ($(DATASET),)
-DATASET=$(PIPELINE_NAME)
-endif
-
+ifneq ($(DATASET),)
 ifeq ($(DATASET_DIR),)
 DATASET_DIR=dataset/
 endif
 
 ifeq ($(DATASET_PATH),)
 DATASET_PATH=$(DATASET_DIR)$(DATASET).csv
+endif
 endif
 
 ifeq ($(DOCS_DIR),)
