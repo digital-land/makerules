@@ -20,8 +20,6 @@ endif
 
 TEMPLATE_FILES=$(wildcard templates/*)
 
-first-pass:: collect
-
 second-pass:: render
 
 render:: $(TEMPLATE_FILES) $(SPECIFICATION_FILES) $(DATASET_FILES) $(DATASET_PATH)
