@@ -64,7 +64,7 @@ endef
 
 collection:: collection/pipeline.mk
 
-include collection/pipeline.mk
+-include collection/pipeline.mk
 
 collection/pipeline.mk: collection/resource.csv collection/source.csv
 	digital-land collection-pipeline-makerules > collection/pipeline.mk
