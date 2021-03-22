@@ -59,7 +59,8 @@ endef
 
 define build-dataset =
 	mkdir -p $(@D)
-	csvstack -z $(shell python -c 'print(__import__("sys").maxsize)') --filenames -n resource $(^) < /dev/null | sed 's/^\([^\.]*\).csv,/\1,/' > $@
+	time digital-land --pipeline-name $(notdir $(@D)) load-entries --output-path $(basename $@).sqlite3 $(^)
+	time digital-land --pipeline-name $(notdir $(@D)) build-dataset $(basename $@).sqlite3 $@
 endef
 
 collection:: collection/pipeline.mk
