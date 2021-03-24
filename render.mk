@@ -8,7 +8,7 @@ DATASET_DIR=dataset/
 endif
 
 ifeq ($(DATASET_PATH),)
-DATASET_PATH=$(DATASET_DIR)$(DATASET).csv
+DATASET_PATH=$(DATASET_DIR)$(DATASET).sqlite3
 endif
 
 ifeq ($(DATASET_URL),)
