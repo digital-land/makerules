@@ -1,5 +1,9 @@
 SOURCE_URL=https://raw.githubusercontent.com/digital-land/
 
+define dataset_url
+'https://github.com/digital-land/$(2)-collection/blob/main/dataset/$(1).sqlite3?raw=true'
+endef
+
 .PHONY: \
 	makerules\
 	specification\
