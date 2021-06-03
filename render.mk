@@ -39,7 +39,7 @@ render:: $(TEMPLATE_FILES) $(SPECIFICATION_FILES) $(DATASET_FILES) $(DATASET_PAT
 ifneq ($(RENDER_COMMAND),)
 	$(RENDER_COMMAND)
 else
-	digital-land --pipeline-name $(DATASET) render --dataset-path $(DATASET_PATH)
+	digital-land --pipeline-name $(DATASET) render --dataset-path $(DATASET_PATH) $(RENDER_FLAGS)
 endif
 	@touch ./docs/.nojekyll
 
