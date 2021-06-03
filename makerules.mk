@@ -42,6 +42,7 @@ second-pass::
 
 # initialise
 init::
+	pip install --update pip
 ifneq (,$(wildcard requirements.txt))
 	pip3 install --upgrade -r requirements.txt
 endif
