@@ -12,7 +12,9 @@ COLLECTION=$(DATASET)
 endif
 
 ifeq ($(DATASET_PATH),)
+ifeq ($(NO_DATASET),)
 DATASET_PATH=$(DATASET_DIR)$(DATASET).sqlite3
+endif
 endif
 
 ifeq ($(DATASET_URL),)
