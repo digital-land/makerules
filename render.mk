@@ -36,6 +36,7 @@ endif
 TEMPLATE_FILES=$(wildcard templates/*)
 
 $(VIEW_MODEL):
+	mkdir dataset/
 ifeq ($(RENDER_FLAGS),"--cross-reference")
 	curl -qfsL 'http://datasette-demo.digital-land.info/view_model.db' > $@
 else
