@@ -59,3 +59,7 @@ load-resources::
 collection/resource/%:
 	@mkdir -p collection/resource/
 	curl -qfsL '$(DATASTORE_URL)$(REPOSITORY)/$(RESOURCE_DIR)$(notdir $@)' > $@
+
+# dev
+dockerised-fetch::
+	docker run -v $(PWD):/pipeline --workdir /pipeline digital_land_python digital-land fetch $(ENDPOINT_URL) --specification-dir=/collection/specification/

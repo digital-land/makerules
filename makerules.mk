@@ -86,7 +86,6 @@ prune::
 makerules::
 	curl -qfsL '$(SOURCE_URL)/makerules/main/makerules.mk' > makerules/makerules.mk
 
-ifeq (,$(wildcard ./makerules/specification.mk))
 # update local copies of specification files
 specification::
 	@mkdir -p specification/
@@ -101,6 +100,7 @@ specification::
 	curl -qfsL '$(SOURCE_URL)/specification/main/specification/pipeline.csv' > specification/pipeline.csv
 	curl -qfsL '$(SOURCE_URL)/specification/main/specification/theme.csv' > specification/theme.csv
 
+ifeq (,$(wildcard ./makerules/specification.mk))
 init::	specification
 endif
 
