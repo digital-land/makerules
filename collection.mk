@@ -16,6 +16,19 @@ ifeq ($(DATASTORE_URL),)
 DATASTORE_URL=https://collection-dataset.s3.eu-west-2.amazonaws.com/
 endif
 
+EXTRA_MOUNTS :=
+ifdef ($(LOCAL_SPECIFICATION_PATH),)
+	EXTRA_MOUNTS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
+else ifeq ($(LOCAL_SPECIFICATION),1)
+	EXTRA_MOUNTS += -v $(PWD)/../specification/specificaiton:/collection/specification
+endif
+
+ifdef ($(LOCAL_DL_PYTHON_PATH),)
+	EXTRA_MOUNTS += -v $(LOCAL_DL_PYTHON_PATH):/Src
+else ifeq ($(LOCAL_DL_PYTHON),1)
+	EXTRA_MOUNTS += -v $(PWD)/../digital-land-python:/src"
+endif
+
 
 # data sources
 SOURCE_CSV=$(COLLECTION_DIR)source.csv
@@ -62,4 +75,15 @@ collection/resource/%:
 
 # dev
 dockerised-fetch::
-	docker run -v $(PWD):/pipeline --workdir /pipeline digital_land_python digital-land fetch $(ENDPOINT_URL) --specification-dir=/collection/specification/
+	mkdir -p local_collection
+	docker run -t \
+		-u $(shell id -u) \
+		-v $(PWD):/pipeline \
+		-v $(PWD)/local_collection:/data \
+		$(EXTRA_MOUNTS) \
+		--workdir /data \
+		$(ECR_URL)digital_land_python:$(DOCKER_TAG) \
+		digital-land \
+		--specification-dir /collection/specification \
+		fetch \
+		'$(ENDPOINT_URL)'
