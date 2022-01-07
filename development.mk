@@ -3,6 +3,22 @@
 	workon\
 	dev
 
+EXTRA_MOUNTS :=
+ifdef ($(LOCAL_SPECIFICATION_PATH),)
+	EXTRA_MOUNTS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
+else ifeq ($(LOCAL_SPECIFICATION),1)
+	EXTRA_MOUNTS += -v $(PWD)/../specification/specificaiton:/collection/specification
+endif
+
+ifdef ($(LOCAL_DL_PYTHON_PATH),)
+	EXTRA_MOUNTS += -v $(LOCAL_DL_PYTHON_PATH):/Src
+else ifeq ($(LOCAL_DL_PYTHON),1)
+	EXTRA_MOUNTS += -v $(PWD)/../digital-land-python:/src
+endif
+
+DOCKER_TAG=latest
+ECR_URL=
+
 # useful when developing
 # export PIP_REQUIRE_VIRTUALENV=true
 
@@ -25,3 +41,19 @@ prune::
 
 makerules::
 	curl -qfsL '$(SOURCE_URL)/makerules/main/development.mk' > makerules/development.mk
+
+dockerised = docker run -t \
+	-u $(shell id -u) \
+	-v $(PWD):/pipeline \
+	-v $(PWD)/local_collection:/data \
+	$(EXTRA_MOUNTS) \
+	--workdir /data \
+	$(ECR_URL)digital_land_python:$(DOCKER_TAG) \
+	digital-land \
+	--specification-dir /collection/specification
+
+dockerised-fetch::
+	mkdir -p local_collection
+	$(dockerised) \
+		fetch \
+		'$(ENDPOINT_URL)'
