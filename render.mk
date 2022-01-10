@@ -33,6 +33,46 @@ ifeq ($(VIEW_MODEL),)
 VIEW_MODEL=$(DATASET_DIR)view_model.sqlite3
 endif
 
+ifeq ($(DOCKERISED),1)
+EXTRA_MOUNTS :=
+# Run in development mode by default for now
+ifneq ($(DEVELOPMENT),0)
+EXTRA_MOUNTS += -v $(PWD)/local_collection:/data --workdir /data
+
+ifdef ($(LOCAL_SPECIFICATION_PATH),)
+	EXTRA_MOUNTS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
+else ifeq ($(LOCAL_SPECIFICATION),1)
+	EXTRA_MOUNTS += -v $(PWD)/../specification/specificaiton:/collection/specification
+endif
+ifdef ($(LOCAL_DL_PYTHON_PATH),)
+	EXTRA_MOUNTS += -v $(LOCAL_DL_PYTHON_PATH):/Src
+else ifeq ($(LOCAL_DL_PYTHON),1)
+	EXTRA_MOUNTS += -v $(PWD)/../digital-land-python:/src
+endif
+endif
+
+DOCKER_TAG=latest
+ECR_URL=public.ecr.aws/l6z6v3j6/
+
+digital-land = docker run -t \
+	-u $(shell id -u) \
+	-v $(PWD):/pipeline \
+	$(EXTRA_MOUNTS) \
+	$(ECR_URL)digital-land-python:$(DOCKER_TAG) \
+	digital-land \
+	--specification-dir /collection/specification
+
+docker-pull::
+ifndef ($(DISABLE_DOCKER_PULL),)
+	docker pull $(ECR_URL)digital-land-python:$(DOCKER_TAG)
+endif
+
+init:: docker-pull
+else
+digital-land = digital-land
+endif
+
+
 
 TEMPLATE_FILES=$(wildcard templates/*)
 
@@ -53,7 +93,7 @@ render:: $(TEMPLATE_FILES) $(SPECIFICATION_FILES) $(DATASET_FILES) $(DATASET_PAT
 ifneq ($(RENDER_COMMAND),)
 	$(RENDER_COMMAND)
 else
-	digital-land --pipeline-name $(DATASET) render --dataset-path $(DATASET_PATH) $(RENDER_FLAGS)
+	$(digital-land) --pipeline-name $(DATASET) render --dataset-path $(DATASET_PATH) $(RENDER_FLAGS)
 endif
 	@touch ./docs/.nojekyll
 
@@ -62,10 +102,10 @@ server:
 	cd docs && python3 -m http.server
 
 clobber clean:: clobber-dataset clobber-docs
-	
+
 clobber-dataset::
 	rm -rf $(DATASET_PATH)
-	
+
 clobber-docs::
 	rm -rf $(DOCS_DIR)
 

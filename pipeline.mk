@@ -3,6 +3,45 @@
 	dataset\
 	commit-dataset
 
+ifeq ($(DOCKERISED),1)
+EXTRA_MOUNTS :=
+# Run in development mode by default for now
+ifneq ($(DEVELOPMENT),0)
+EXTRA_MOUNTS += -v $(PWD)/local_collection:/data --workdir /data
+
+ifdef ($(LOCAL_SPECIFICATION_PATH),)
+	EXTRA_MOUNTS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
+else ifeq ($(LOCAL_SPECIFICATION),1)
+	EXTRA_MOUNTS += -v $(PWD)/../specification/specificaiton:/collection/specification
+endif
+ifdef ($(LOCAL_DL_PYTHON_PATH),)
+	EXTRA_MOUNTS += -v $(LOCAL_DL_PYTHON_PATH):/Src
+else ifeq ($(LOCAL_DL_PYTHON),1)
+	EXTRA_MOUNTS += -v $(PWD)/../digital-land-python:/src
+endif
+endif
+
+DOCKER_TAG=latest
+ECR_URL=public.ecr.aws/l6z6v3j6/
+
+digital-land = docker run -t \
+	-u $(shell id -u) \
+	-v $(PWD):/pipeline \
+	$(EXTRA_MOUNTS) \
+	$(ECR_URL)digital-land-python:$(DOCKER_TAG) \
+	digital-land \
+	--specification-dir /collection/specification
+
+docker-pull::
+ifndef ($(DISABLE_DOCKER_PULL),)
+	docker pull $(ECR_URL)digital-land-python:$(DOCKER_TAG)
+endif
+
+init:: docker-pull
+else
+digital-land = digital-land
+endif
+
 # data sources
 # collected resources
 ifeq ($(COLLECTION_DIR),)
@@ -53,12 +92,12 @@ endif
 
 define run-pipeline =
 	mkdir -p $(@D) $(ISSUE_DIR)$(notdir $(@D))
-	digital-land --pipeline-name $(notdir $(@D)) $(DIGITAL_LAND_FLAGS) pipeline --issue-dir $(ISSUE_DIR)$(notdir $(@D)) $(PIPELINE_FLAGS) $< $@
+	$(digital-land) --pipeline-name $(notdir $(@D)) $(DIGITAL_LAND_FLAGS) pipeline --issue-dir $(ISSUE_DIR)$(notdir $(@D)) $(PIPELINE_FLAGS) $< $@
 endef
 
 define build-dataset =
 	mkdir -p $(@D)
-	time digital-land --pipeline-name $(notdir $(basename $@)) load-entries --output-path $(basename $@).sqlite3 $(^)
+	time $(digital-land) --pipeline-name $(notdir $(basename $@)) load-entries --output-path $(basename $@).sqlite3 $(^)
 	time digital-land --pipeline-name $(notdir $(basename $@)) build-dataset $(basename $@).sqlite3 $@
 endef
 
@@ -67,7 +106,7 @@ collection:: collection/pipeline.mk
 -include collection/pipeline.mk
 
 collection/pipeline.mk: collection/resource.csv collection/source.csv
-	digital-land collection-pipeline-makerules > collection/pipeline.mk
+	$(digital-land) collection-pipeline-makerules > collection/pipeline.mk
 
 # restart the make process to pick-up collected resource files
 second-pass::
@@ -99,11 +138,6 @@ init::
 makerules::
 	curl -qfsL '$(SOURCE_URL)/makerules/main/pipeline.mk' > makerules/pipeline.mk
 
-commit-dataset::
-	mkdir -p $(DATASET_DIRS)
-	git add $(DATASET_DIRS)
-	git diff --quiet && git diff --staged --quiet || (git commit -m "Data $(shell date +%F)"; git push origin $(BRANCH))
-
 fetch-s3::
 	aws s3 sync s3://collection-dataset/$(REPOSITORY)/$(RESOURCE_DIR) $(RESOURCE_DIR) --no-progress
 
@@ -111,7 +145,15 @@ fetch-transformed-s3::
 	aws s3 sync s3://collection-dataset/$(REPOSITORY)/$(ISSUE_DIR) $(ISSUE_DIR) --no-progress
 	aws s3 sync s3://collection-dataset/$(REPOSITORY)/$(TRANSFORMED_DIR) $(TRANSFORMED_DIR) --no-progress
 	aws s3 sync s3://collection-dataset/$(REPOSITORY)/$(DATASET_DIR) $(DATASET_DIR) --no-progress
-	
+
+# These will run as usual unless we're in a dockerised environment and DEVELOPMENT isn't explicitly set to 1
+ifneq ($(DOCKERISED),1)
+ifneq ($(DEVELOPMENT),1)
+commit-dataset::
+	mkdir -p $(DATASET_DIRS)
+	git add $(DATASET_DIRS)
+	git diff --quiet && git diff --staged --quiet || (git commit -m "Data $(shell date +%F)"; git push origin $(BRANCH))
+
 push-collection-s3::
 	aws s3 sync $(RESOURCE_DIR) s3://collection-dataset/$(REPOSITORY)/$(RESOURCE_DIR) --no-progress
 	aws s3 cp $(COLLECTION_DIR)/log.csv s3://collection-dataset/$(REPOSITORY)/$(COLLECTION_DIR) --no-progress
@@ -126,6 +168,8 @@ push-dataset-s3::
 	aws s3 sync $(ISSUE_DIR) s3://collection-dataset/$(REPOSITORY)/$(ISSUE_DIR) --no-progress
 	@mkdir -p $(DATASET_DIR)
 	aws s3 sync $(DATASET_DIR) s3://collection-dataset/$(REPOSITORY)/$(DATASET_DIR) --no-progress
+endif
+endif
 
 pipeline-run::
 	aws batch submit-job --job-name $(REPOSITORY)-$(shell date '+%Y-%m-%d-%H-%M-%S') --job-queue dl-batch-queue --job-definition dl-batch-def --container-overrides '{"environment": [{"name":"BATCH_FILE_URL","value":"https://raw.githubusercontent.com/digital-land/docker-builds/main/pipeline_run.sh"}, {"name" : "REPOSITORY","value" : "$(REPOSITORY)"}]}'
