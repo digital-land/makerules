@@ -17,7 +17,7 @@ else ifeq ($(LOCAL_DL_PYTHON),1)
 endif
 
 DOCKER_TAG=latest
-ECR_URL=
+ECR_URL=public.ecr.aws/l6z6v3j6/
 
 # useful when developing
 # export PIP_REQUIRE_VIRTUALENV=true
@@ -48,11 +48,16 @@ dockerised = docker run -t \
 	-v $(PWD)/local_collection:/data \
 	$(EXTRA_MOUNTS) \
 	--workdir /data \
-	$(ECR_URL)digital_land_python:$(DOCKER_TAG) \
+	$(ECR_URL)digital-land-python:$(DOCKER_TAG) \
 	digital-land \
 	--specification-dir /collection/specification
 
-dockerised-fetch::
+docker-pull::
+ifndef ($(DISABLE_DOCKER_PULL),)
+	docker pull $(ECR_URL)digital-land-python:$(DOCKER_TAG)
+endif
+
+dockerised-fetch:: docker-pull
 	mkdir -p local_collection
 	$(dockerised) \
 		fetch \
