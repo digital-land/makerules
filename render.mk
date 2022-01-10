@@ -33,22 +33,30 @@ ifeq ($(VIEW_MODEL),)
 VIEW_MODEL=$(DATASET_DIR)view_model.sqlite3
 endif
 
-ifeq ($(DOCKERISED),1)
-EXTRA_MOUNTS :=
-# Run in development mode by default for now
-ifneq ($(DEVELOPMENT),0)
-EXTRA_MOUNTS += -v $(PWD)/local_collection:/data --workdir /data
+ifndef ($(DOCKERISED),)
+	DOCKERISED = 0
+	DEVELOPMENT = 0
+else
+	# Run in development mode by default for now
+	ifndef ($(DEVELOPMENT),)
+		DEVELOPMENT = 1
+	endif
+endif
 
-ifdef ($(LOCAL_SPECIFICATION_PATH),)
-	EXTRA_MOUNTS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
-else ifeq ($(LOCAL_SPECIFICATION),1)
-	EXTRA_MOUNTS += -v $(PWD)/../specification/specificaiton:/collection/specification
-endif
-ifdef ($(LOCAL_DL_PYTHON_PATH),)
-	EXTRA_MOUNTS += -v $(LOCAL_DL_PYTHON_PATH):/Src
-else ifeq ($(LOCAL_DL_PYTHON),1)
-	EXTRA_MOUNTS += -v $(PWD)/../digital-land-python:/src
-endif
+EXTRA_MOUNTS :=
+ifeq ($(and $(DOCKERISED),$(DEVELOPMENT)))
+	EXTRA_MOUNTS += -v $(PWD)/local_collection:/data --workdir /data
+
+	ifdef ($(LOCAL_SPECIFICATION_PATH),)
+		EXTRA_MOUNTS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
+	else ifeq ($(LOCAL_SPECIFICATION),1)
+		EXTRA_MOUNTS += -v $(PWD)/../specification/specificaiton:/collection/specification
+	endif
+	ifdef ($(LOCAL_DL_PYTHON_PATH),)
+		EXTRA_MOUNTS += -v $(LOCAL_DL_PYTHON_PATH):/Src
+	else ifeq ($(LOCAL_DL_PYTHON),1)
+		EXTRA_MOUNTS += -v $(PWD)/../digital-land-python:/src
+	endif
 endif
 
 DOCKER_TAG=latest

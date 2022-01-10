@@ -3,22 +3,30 @@
 	dataset\
 	commit-dataset
 
-ifeq ($(DOCKERISED),1)
-EXTRA_MOUNTS :=
-# Run in development mode by default for now
-ifneq ($(DEVELOPMENT),0)
-EXTRA_MOUNTS += -v $(PWD)/local_collection:/data --workdir /data
+ifndef ($(DOCKERISED),)
+	DOCKERISED = 0
+	DEVELOPMENT = 0
+else
+	# Run in development mode by default for now
+	ifndef ($(DEVELOPMENT),)
+		DEVELOPMENT = 1
+	endif
+endif
 
-ifdef ($(LOCAL_SPECIFICATION_PATH),)
-	EXTRA_MOUNTS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
-else ifeq ($(LOCAL_SPECIFICATION),1)
-	EXTRA_MOUNTS += -v $(PWD)/../specification/specificaiton:/collection/specification
-endif
-ifdef ($(LOCAL_DL_PYTHON_PATH),)
-	EXTRA_MOUNTS += -v $(LOCAL_DL_PYTHON_PATH):/Src
-else ifeq ($(LOCAL_DL_PYTHON),1)
-	EXTRA_MOUNTS += -v $(PWD)/../digital-land-python:/src
-endif
+EXTRA_MOUNTS :=
+ifeq ($(and $(DOCKERISED),$(DEVELOPMENT)))
+	EXTRA_MOUNTS += -v $(PWD)/local_collection:/data --workdir /data
+
+	ifdef ($(LOCAL_SPECIFICATION_PATH),)
+		EXTRA_MOUNTS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
+	else ifeq ($(LOCAL_SPECIFICATION),1)
+		EXTRA_MOUNTS += -v $(PWD)/../specification/specificaiton:/collection/specification
+	endif
+	ifdef ($(LOCAL_DL_PYTHON_PATH),)
+		EXTRA_MOUNTS += -v $(LOCAL_DL_PYTHON_PATH):/Src
+	else ifeq ($(LOCAL_DL_PYTHON),1)
+		EXTRA_MOUNTS += -v $(PWD)/../digital-land-python:/src
+	endif
 endif
 
 DOCKER_TAG=latest
@@ -146,9 +154,8 @@ fetch-transformed-s3::
 	aws s3 sync s3://collection-dataset/$(REPOSITORY)/$(TRANSFORMED_DIR) $(TRANSFORMED_DIR) --no-progress
 	aws s3 sync s3://collection-dataset/$(REPOSITORY)/$(DATASET_DIR) $(DATASET_DIR) --no-progress
 
-# These will run as usual unless we're in a dockerised environment and DEVELOPMENT isn't explicitly set to 1
-ifneq ($(DOCKERISED),1)
-ifneq ($(DEVELOPMENT),1)
+# These will run as usual unless we're in a dockerised environment and DEVELOPMENT isn't explicitly set to 1 i.e if DEVELOPMENT != 1 or DOCKERISED != 1
+ifneq ($and($(DOCKERISED), $(DEVELOPMENT)))
 commit-dataset::
 	mkdir -p $(DATASET_DIRS)
 	git add $(DATASET_DIRS)
@@ -168,7 +175,6 @@ push-dataset-s3::
 	aws s3 sync $(ISSUE_DIR) s3://collection-dataset/$(REPOSITORY)/$(ISSUE_DIR) --no-progress
 	@mkdir -p $(DATASET_DIR)
 	aws s3 sync $(DATASET_DIR) s3://collection-dataset/$(REPOSITORY)/$(DATASET_DIR) --no-progress
-endif
 endif
 
 pipeline-run::
