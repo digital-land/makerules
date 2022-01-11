@@ -3,52 +3,7 @@
 	dataset\
 	commit-dataset
 
-ifndef ($(DOCKERISED),)
-	DOCKERISED = 0
-	DEVELOPMENT = 0
-else
-	# Run in development mode by default for now
-	ifndef ($(DEVELOPMENT),)
-		DEVELOPMENT = 1
-	endif
-endif
-
-EXTRA_MOUNTS :=
-ifeq ($(and $(DOCKERISED),$(DEVELOPMENT)))
-	EXTRA_MOUNTS += -v $(PWD)/local_collection:/data --workdir /data
-
-	ifdef ($(LOCAL_SPECIFICATION_PATH),)
-		EXTRA_MOUNTS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
-	else ifeq ($(LOCAL_SPECIFICATION),1)
-		EXTRA_MOUNTS += -v $(PWD)/../specification/specificaiton:/collection/specification
-	endif
-	ifdef ($(LOCAL_DL_PYTHON_PATH),)
-		EXTRA_MOUNTS += -v $(LOCAL_DL_PYTHON_PATH):/Src
-	else ifeq ($(LOCAL_DL_PYTHON),1)
-		EXTRA_MOUNTS += -v $(PWD)/../digital-land-python:/src
-	endif
-endif
-
-DOCKER_TAG=latest
-ECR_URL=public.ecr.aws/l6z6v3j6/
-
-digital-land = docker run -t \
-	-u $(shell id -u) \
-	-v $(PWD):/pipeline \
-	$(EXTRA_MOUNTS) \
-	$(ECR_URL)digital-land-python:$(DOCKER_TAG) \
-	digital-land \
-	--specification-dir /collection/specification
-
-docker-pull::
-ifndef ($(DISABLE_DOCKER_PULL),)
-	docker pull $(ECR_URL)digital-land-python:$(DOCKER_TAG)
-endif
-
-init:: docker-pull
-else
-digital-land = digital-land
-endif
+include makerules/docker.mk
 
 # data sources
 # collected resources
@@ -155,7 +110,7 @@ fetch-transformed-s3::
 	aws s3 sync s3://collection-dataset/$(REPOSITORY)/$(DATASET_DIR) $(DATASET_DIR) --no-progress
 
 # These will run as usual unless we're in a dockerised environment and DEVELOPMENT isn't explicitly set to 1 i.e if DEVELOPMENT != 1 or DOCKERISED != 1
-ifneq ($and($(DOCKERISED), $(DEVELOPMENT)))
+ifeq ($(DEVELOPMENT),0)
 commit-dataset::
 	mkdir -p $(DATASET_DIRS)
 	git add $(DATASET_DIRS)

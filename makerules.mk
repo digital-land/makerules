@@ -1,5 +1,6 @@
 SOURCE_URL=https://raw.githubusercontent.com/digital-land/
 
+include makerules/docker.mk
 # deduce the repository
 ifeq ($(REPOSITORY),)
 REPOSITORY=$(shell basename -s .git `git config --get remote.origin.url`)
@@ -58,7 +59,7 @@ second-pass::
 	@:
 
 # initialise
-ifeq (,$(wildcard /.dockerenv ))
+ifeq ($(DOCKERISED),0)
 init::
 	pip install --upgrade pip
 ifneq (,$(wildcard requirements.txt))
