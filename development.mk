@@ -43,7 +43,7 @@ makerules::
 	curl -qfsL '$(SOURCE_URL)/makerules/main/development.mk' > makerules/development.mk
 
 dockerised = docker run -t \
-	-u $(shell id -u) \
+	-e LOCAL_USER_ID=$(shell id -u) \
 	-v $(PWD):/pipeline \
 	-v $(PWD)/local_collection:/data \
 	$(EXTRA_MOUNTS) \

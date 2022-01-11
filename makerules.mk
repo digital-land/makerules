@@ -58,6 +58,7 @@ second-pass::
 	@:
 
 # initialise
+ifeq (,$(wildcard /.dockerenv ))
 init::
 	pip install --upgrade pip
 ifneq (,$(wildcard requirements.txt))
@@ -65,6 +66,7 @@ ifneq (,$(wildcard requirements.txt))
 endif
 ifneq (,$(wildcard setup.py))
 	pip install -e .$(PIP_INSTALL_PACKAGE)
+endif
 endif
 
 submodules::
