@@ -12,42 +12,46 @@ endif
 $(info    DOCKERISED is $(DOCKERISED))
 $(info    DEVELOPMENT is $(DEVELOPMENT))
 
-EXTRA_MOUNTS :=
+EXTRA_DOCKER_ARGS :=
 EXTRA_DL_ARGS :=
 ifeq ($(DEVELOPMENT),1)
-EXTRA_MOUNTS += -v $(PWD)/local_collection/collection/log:/pipeline/collection/log
-EXTRA_MOUNTS += -v $(PWD)/local_collection/collection/resource:/pipeline/collection/resource
+EXTRA_DOCKER_ARGS += -v $(PWD)/local_collection/collection/log:/pipeline/collection/log
+EXTRA_DOCKER_ARGS += -v $(PWD)/local_collection/collection/resource:/pipeline/collection/resource
 ifneq (,$(wildcard ./fixed))
-EXTRA_MOUNTS += -v $(PWD)/local_collection/fixed:/pipeline/fixed
+EXTRA_DOCKER_ARGS += -v $(PWD)/local_collection/fixed:/pipeline/fixed
 endif
 ifneq (,$(wildcard ./harmonised))
-EXTRA_MOUNTS += -v $(PWD)/local_collection/harmonised:/pipeline/harmonised
+EXTRA_DOCKER_ARGS += -v $(PWD)/local_collection/harmonised:/pipeline/harmonised
 endif
 ifneq (,$(wildcard ./harmonised))
-EXTRA_MOUNTS += -v $(PWD)/local_collection/transformed:/pipeline/transformed
+EXTRA_DOCKER_ARGS += -v $(PWD)/local_collection/transformed:/pipeline/transformed
 endif
 
 ifdef ($(LOCAL_SPECIFICATION_PATH),)
-EXTRA_MOUNTS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
+EXTRA_DOCKER_ARGS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
 else ifeq ($(LOCAL_SPECIFICATION),1)
-EXTRA_MOUNTS += -v $(PWD)/../specification/specification:/collection/specification
+EXTRA_DOCKER_ARGS += -v $(PWD)/../specification/specification:/collection/specification
 endif
 
 ifdef ($(LOCAL_DL_PYTHON_PATH),)
-EXTRA_MOUNTS += -v $(LOCAL_DL_PYTHON_PATH):/Src
+EXTRA_DOCKER_ARGS += -v $(LOCAL_DL_PYTHON_PATH):/Src
 else ifeq ($(LOCAL_DL_PYTHON),1)
-EXTRA_MOUNTS += -v $(PWD)/../digital-land-python:/src
+EXTRA_DOCKER_ARGS += -v $(PWD)/../digital-land-python:/src
+endif
+
+ifeq ($(word 2, $(MAKECMDGOALS)),shell_cmd)
+EXTRA_DOCKER_ARGS += --entrypoint bash
 endif
 
 endif
-$(info    EXTRA_MOUNTS is $(EXTRA_MOUNTS))
+$(info    EXTRA_DOCKER_ARGS is $(EXTRA_DOCKER_ARGS))
 
 # DOCKER_TAG=latest
 ECR_URL=public.ecr.aws/l6z6v3j6/
 DOCKER_TAG=$(shell basename $(PWD))
 DOCKER_PATH=$(ECR_URL)digital-land-python:$(DOCKER_TAG)
 
-dockerised = docker run -t \
+docker-prefix = docker run -t \
 	-e LOCAL_USER_ID=$(shell id -u) \
 	-e AWS_ACCESS_KEY_ID \
     -e AWS_DEFAULT_REGION \
@@ -57,16 +61,23 @@ dockerised = docker run -t \
     -e AWS_SESSION_EXPIRATION \
     -e AWS_SESSION_TOKEN \
 	-v $(PWD):/pipeline \
-	$(EXTRA_MOUNTS) \
+	$(EXTRA_DOCKER_ARGS)
+
+dockerised = $(docker-prefix) \
 	$(DOCKER_PATH)
 
-shell_cmd = $(dockerised) bash
+shell_cmd::
+	$(docker-prefix) \
+		--entrypoint bash \
+		$(DOCKER_PATH)
 
 digital-land-cli = $(dockerised) \
 	digital-land \
 	$(EXTRA_DL_ARGS)
 
-digital-land = $(dockerised) make
+dockerised::
+	$(info MAKECMDGOALS is $(MAKECMDGOALS))
+	$(dockerised) $(word 2, $(MAKECMDGOALS))
 
 ifeq ($(DOCKERISED),1)
 init:: docker-pull
