@@ -13,10 +13,21 @@ $(info    DOCKERISED is $(DOCKERISED))
 $(info    DEVELOPMENT is $(DEVELOPMENT))
 
 EXTRA_MOUNTS :=
+EXTRA_DL_ARGS :=
 # ifeq ($(and $(DOCKERISED),$(DEVELOPMENT)))
 ifeq ($(DOCKERISED),1)
 ifeq ($(DEVELOPMENT),1)
-EXTRA_MOUNTS += -v $(PWD)/local_collection:/data --workdir /data
+EXTRA_MOUNTS += -v $(PWD)/local_collection/collection/log:/pipeline/collection/log
+EXTRA_MOUNTS += -v $(PWD)/local_collection/collection/resource:/pipeline/collection/resource
+ifneq (,$(wildcard ./fixed))
+EXTRA_MOUNTS += -v $(PWD)/local_collection/fixed:/pipeline/fixed
+endif
+ifneq (,$(wildcard ./harmonised))
+EXTRA_MOUNTS += -v $(PWD)/local_collection/harmonised:/pipeline/harmonised
+endif
+ifneq (,$(wildcard ./harmonised))
+EXTRA_MOUNTS += -v $(PWD)/local_collection/transformed:/pipeline/transformed
+endif
 
 ifdef ($(LOCAL_SPECIFICATION_PATH),)
 EXTRA_MOUNTS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
@@ -36,7 +47,7 @@ $(info    EXTRA_MOUNTS is $(EXTRA_MOUNTS))
 DOCKER_TAG=latest
 ECR_URL=public.ecr.aws/l6z6v3j6/
 
-COLLECTION_DIR=/pipeline/collection/
+EXTRA_DL_ARGS += --specification-dir /collection/specification
 
 /pipeline/collection/resource.csv:
 
@@ -50,7 +61,7 @@ digital-land = docker run -t \
 	$(EXTRA_MOUNTS) \
 	$(ECR_URL)digital-land-python:$(DOCKER_TAG) \
 	digital-land \
-	--specification-dir /collection/specification
+	$(EXTRA_DL_ARGS)
 
 docker-pull::
 ifndef ($(DISABLE_DOCKER_PULL),)

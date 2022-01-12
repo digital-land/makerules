@@ -37,10 +37,10 @@ first-pass:: collect
 second-pass:: collection
 
 collect:: $(SOURCE_CSV) $(ENDPOINT_CSV)
-	$(digital-land) collect $(ENDPOINT_CSV)
+	$(digital-land) collect $(ENDPOINT_CSV) --collection-dir $(COLLECTION_DIR)
 
 collection::
-	$(digital-land) collection-save-csv
+	$(digital-land) collection-save-csv  --collection-dir $(COLLECTION_DIR)
 
 clobber-today::
 	rm -rf $(LOG_FILES_TODAY) $(COLLECTION_INDEX)
