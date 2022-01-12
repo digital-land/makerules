@@ -55,11 +55,22 @@ EXTRA_DL_ARGS += --specification-dir /collection/specification
 
 /pipeline/collection/endpoint.csv:
 
-digital-land = docker run -t \
+dockerised = docker run -t \
 	-e LOCAL_USER_ID=$(shell id -u) \
+	-e AWS_ACCESS_KEY_ID \
+    -e AWS_DEFAULT_REGION \
+    -e AWS_REGION \
+    -e AWS_SECRET_ACCESS_KEY \
+    -e AWS_SECURITY_TOKEN \
+    -e AWS_SESSION_EXPIRATION \
+    -e AWS_SESSION_TOKEN \
 	-v $(PWD):/pipeline \
 	$(EXTRA_MOUNTS) \
-	$(ECR_URL)digital-land-python:$(DOCKER_TAG) \
+	$(ECR_URL)digital-land-python:$(DOCKER_TAG)
+
+shell_cmd = $(dockerised) bash
+
+digital-land = $(dockerised) \
 	digital-land \
 	$(EXTRA_DL_ARGS)
 
@@ -70,6 +81,9 @@ endif
 
 init:: docker-pull
 else
+shell_cmd = $(SHELL)
 digital-land = digital-land
 endif
 
+debug_shell:
+	$(shell_cmd)
