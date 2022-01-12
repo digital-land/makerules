@@ -21,7 +21,7 @@ EXTRA_MOUNTS += -v $(PWD)/local_collection:/data --workdir /data
 ifdef ($(LOCAL_SPECIFICATION_PATH),)
 EXTRA_MOUNTS += -v $(LOCAL_SPECIFICATION_PATH)/specification:/collection/specification
 else ifeq ($(LOCAL_SPECIFICATION),1)
-EXTRA_MOUNTS += -v $(PWD)/../specification/specificaiton:/collection/specification
+EXTRA_MOUNTS += -v $(PWD)/../specification/specification:/collection/specification
 endif
 
 ifdef ($(LOCAL_DL_PYTHON_PATH),)
