@@ -39,9 +39,6 @@ else ifeq ($(LOCAL_DL_PYTHON),1)
 EXTRA_DOCKER_ARGS += -v $(PWD)/../digital-land-python:/src
 endif
 
-ifeq ($(word 2, $(MAKECMDGOALS)),shell_cmd)
-EXTRA_DOCKER_ARGS += --entrypoint bash
-endif
 
 endif
 $(info    EXTRA_DOCKER_ARGS is $(EXTRA_DOCKER_ARGS))
@@ -52,7 +49,7 @@ DOCKER_TAG=$(shell basename $(PWD))
 DOCKER_PATH=$(ECR_URL)digital-land-python:$(DOCKER_TAG)
 
 docker-prefix = docker run -t \
-	-e LOCAL_USER_ID=$(shell id -u) \
+	-u $(shell id -u) \
 	-e AWS_ACCESS_KEY_ID \
     -e AWS_DEFAULT_REGION \
     -e AWS_REGION \
@@ -71,28 +68,23 @@ shell_cmd::
 		--entrypoint bash \
 		$(DOCKER_PATH)
 
-digital-land-cli = $(dockerised) \
-	digital-land \
-	$(EXTRA_DL_ARGS)
-
-dockerised::
+dockerised:: docker-pull
 	$(info MAKECMDGOALS is $(MAKECMDGOALS))
 	$(dockerised) $(word 2, $(MAKECMDGOALS))
-
-ifeq ($(DOCKERISED),1)
-init:: docker-pull
-endif
 
 docker-build::
 	docker build . -f makerules/Dockerfile -t $(DOCKER_PATH)
 
 docker-pull::
 ifndef ($(DISABLE_DOCKER_PULL),)
-	docker pull $(ECR_URL)digital-land-python:$(DOCKER_TAG)
+	docker pull $(DOCKER_PATH)
 endif
 
-debug_shell:
-	$(shell_cmd)
 
-digital-land-cli:
-	$(digital-land-cli)
+digital-land-cli::
+	$(docker-prefix) \
+		--entrypoint digital-land \
+		$(DOCKER_PATH) \
+		$(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
+
+
