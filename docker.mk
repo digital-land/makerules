@@ -38,6 +38,12 @@ ECR_URL=public.ecr.aws/l6z6v3j6/
 
 COLLECTION_DIR=/pipeline/collection/
 
+/pipeline/collection/resource.csv:
+
+/pipeline/collection/source.csv:
+
+/pipeline/collection/endpoint.csv:
+
 digital-land = docker run -t \
 	-e LOCAL_USER_ID=$(shell id -u) \
 	-v $(PWD):/pipeline \
