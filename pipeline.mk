@@ -109,7 +109,7 @@ fetch-transformed-s3::
 	aws s3 sync s3://collection-dataset/$(REPOSITORY)/$(TRANSFORMED_DIR) $(TRANSFORMED_DIR) --no-progress
 	aws s3 sync s3://collection-dataset/$(REPOSITORY)/$(DATASET_DIR) $(DATASET_DIR) --no-progress
 
-# These will run as usual unless we're in a dockerised environment and DEVELOPMENT isn't explicitly set to 1 i.e if DEVELOPMENT != 1 or DOCKERISED != 1
+# These will run as usual if DEVELOPMENT isn't explicitly set to 1
 ifeq ($(DEVELOPMENT),0)
 commit-dataset::
 	mkdir -p $(DATASET_DIRS)

@@ -48,7 +48,7 @@ clobber-today::
 makerules::
 	curl -qfsL '$(SOURCE_URL)/makerules/main/collection.mk' > makerules/collection.mk
 
-# These will run as usual unless we're in a dockerised environment and DEVELOPMENT isn't explicitly set to 1 i.e if DEVELOPMENT != 1 or DOCKERISED != 1
+# These will run as usual if DEVELOPMENT isn't explicitly set to 1
 ifeq ($(DEVELOPMENT),0)
 commit-dataset::
 	mkdir -p $(DATASET_DIRS)
