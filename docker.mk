@@ -9,8 +9,6 @@ else
 DEVELOPMENT = 1
 endif
 endif
-$(info    DOCKERISED is $(DOCKERISED))
-$(info    DEVELOPMENT is $(DEVELOPMENT))
 
 EXTRA_DOCKER_ARGS :=
 EXTRA_DL_ARGS :=
@@ -41,7 +39,6 @@ endif
 
 
 endif
-$(info    EXTRA_DOCKER_ARGS is $(EXTRA_DOCKER_ARGS))
 
 # DOCKER_TAG=latest
 ECR_URL=public.ecr.aws/l6z6v3j6/
@@ -70,12 +67,13 @@ shell_cmd::
 
 dockerised:: docker-pull
 	$(info MAKECMDGOALS is $(MAKECMDGOALS))
-	$(dockerised) $(word 2, $(MAKECMDGOALS))
+	$(dockerised) \
+		$(TARGET)
 
-docker-build::
+docker-build:: docker-check
 	docker build . -f makerules/Dockerfile -t $(DOCKER_PATH)
 
-docker-pull::
+docker-pull:: docker-ecr-login
 ifndef ($(DISABLE_DOCKER_PULL),)
 	docker pull $(DOCKER_PATH)
 endif
@@ -85,6 +83,16 @@ digital-land-cli::
 	$(docker-prefix) \
 		--entrypoint digital-land \
 		$(DOCKER_PATH) \
-		$(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
+		$(TARGET)
 
+docker-check:
+ifeq (, $(shell which docker))
+	$(error "No docker in $(PATH), consider doing apt-get install docker OR brew install --cask docker")
+endif
+
+docker-ecr-login: docker-check
+	aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+
+docker-push: docker-ecr-login
+	docker push $(DOCKER_PATH)
 
