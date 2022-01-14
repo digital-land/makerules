@@ -1,9 +1,10 @@
-ifneq ($(DOCKERISED),1)
+ifneq ($(findstring dockerised,$(MAKECMDGOALS)),dockerised)
 DOCKERISED = 0
 DEVELOPMENT = 0
 else
-# Run in development mode by default for now
-ifeq ($(DEVELOPMENT),0)
+DOCKERISED = 1
+# Don't run in development mode by default for now
+ifndef ($(DEVELOPMENT),)
 DEVELOPMENT = 0
 else
 DEVELOPMENT = 1
@@ -79,7 +80,7 @@ shell_cmd::
 		$(DOCKER_PATH)
 
 dockerised:: mk-collection
-	$(info MAKECMDGOALS is $(MAKECMDGOALS))
+	$(info Running '$(TARGET)' targets in $(DOCKER_TAG) container)
 	$(dockerised) \
 		$(TARGET)
 

@@ -63,7 +63,9 @@ define build-dataset =
 	md5sum $@ $(basename $@).sqlite3
 endef
 
+ifneq ($(DOCKERISED),1)
 collection:: collection/pipeline.mk
+endif
 
 -include collection/pipeline.mk
 
