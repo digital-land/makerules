@@ -13,6 +13,7 @@ endif
 EXTRA_DOCKER_ARGS :=
 EXTRA_DL_ARGS :=
 ifeq ($(DEVELOPMENT),1)
+init:: mk-local-collection specification
 EXTRA_DOCKER_ARGS += -v $(PWD)/local_collection/collection/log:/pipeline/collection/log
 EXTRA_DOCKER_ARGS += -v $(PWD)/local_collection/collection/resource:/pipeline/collection/resource
 ifneq (,$(wildcard ./fixed))
@@ -38,12 +39,21 @@ EXTRA_DOCKER_ARGS += -v $(PWD)/../digital-land-python:/src
 endif
 
 
+else
+mk-collection-resource::
+	mkdir -p collection/resource
+
+init:: mk-collection-resource specification
 endif
 
 # DOCKER_TAG=latest
 ECR_URL=public.ecr.aws/l6z6v3j6/
 DOCKER_TAG=$(shell basename $(PWD))
 DOCKER_PATH=$(ECR_URL)digital-land-python:$(DOCKER_TAG)
+
+mk-local-collection::
+	mkdir -p local_collection/collection/log
+	mkdir -p local_collection/collection/resource
 
 docker-prefix = docker run -t \
 	-u $(shell id -u) \
@@ -74,7 +84,7 @@ docker-build:: docker-check
 	docker build . -f makerules/Dockerfile -t $(DOCKER_PATH)
 
 docker-pull:: docker-ecr-login
-ifndef ($(DISABLE_DOCKER_PULL),)
+ifneq ($(DISABLE_DOCKER_PULL),1)
 	docker pull $(DOCKER_PATH)
 endif
 
