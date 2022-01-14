@@ -75,7 +75,7 @@ shell_cmd::
 		--entrypoint bash \
 		$(DOCKER_PATH)
 
-dockerised:: docker-pull
+dockerised::
 	$(info MAKECMDGOALS is $(MAKECMDGOALS))
 	$(dockerised) \
 		$(TARGET)
@@ -83,11 +83,12 @@ dockerised:: docker-pull
 docker-build:: docker-check
 	docker build . -f makerules/Dockerfile -t $(DOCKER_PATH)
 
-docker-pull:: docker-ecr-login
 ifneq ($(DISABLE_DOCKER_PULL),1)
+docker-pull:: docker-ecr-login
 	docker pull $(DOCKER_PATH)
+else
+docker-pull::
 endif
-
 
 digital-land-cli::
 	$(docker-prefix) \
