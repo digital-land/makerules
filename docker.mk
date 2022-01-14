@@ -10,9 +10,6 @@ DEVELOPMENT = 1
 endif
 endif
 
-fetch-organisation::
-	@mkdir -p $(CACHE_DIR)
-	curl -qfs "https://raw.githubusercontent.com/digital-land/organisation-dataset/main/collection/organisation.csv" > $(CACHE_DIR)organisation.csv
 
 EXTRA_DOCKER_ARGS :=
 EXTRA_DL_ARGS :=
@@ -37,7 +34,7 @@ else ifeq ($(LOCAL_DL_PYTHON),1)
 EXTRA_DOCKER_ARGS += -v $(PWD)/../digital-land-python:/src
 endif
 
-mk-local-collection::
+mk-collection::
 	mkdir -p local_collection/collection/log
 	mkdir -p local_collection/collection/resource
 	mkdir -p local_collection/transformed
@@ -46,7 +43,6 @@ mk-local-collection::
 	mkdir -p local_collection/fixed
 	mkdir -p local_collection/harmonised
 
-init:: mk-local-collection specification fetch-organisation
 else
 mk-collection::
 	mkdir -p collection/resource
@@ -56,10 +52,8 @@ mk-collection::
 	mkdir -p fixed
 	mkdir -p harmonised
 
-init:: mk-collection specification fetch-organisation
 endif
 
-# DOCKER_TAG=latest
 ECR_URL=public.ecr.aws/l6z6v3j6/
 DOCKER_TAG=$(shell basename $(PWD))
 DOCKER_PATH=$(ECR_URL)digital-land-python:$(DOCKER_TAG)
@@ -74,7 +68,6 @@ docker-prefix = docker run -t \
     -e AWS_SESSION_EXPIRATION \
     -e AWS_SESSION_TOKEN \
 	-v $(PWD):/pipeline \
-	-v dl-pipeline-var-cache:/var/cache \
 	$(EXTRA_DOCKER_ARGS)
 
 dockerised = $(docker-prefix) \
@@ -85,7 +78,7 @@ shell_cmd::
 		--entrypoint bash \
 		$(DOCKER_PATH)
 
-dockerised::
+dockerised:: mk-collection
 	$(info MAKECMDGOALS is $(MAKECMDGOALS))
 	$(dockerised) \
 		$(TARGET)
