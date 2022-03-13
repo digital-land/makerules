@@ -37,7 +37,9 @@ second-pass:: collection
 collect:: $(SOURCE_CSV) $(ENDPOINT_CSV)
 	digital-land collect $(ENDPOINT_CSV)
 
-collection::
+collection::	collection/resource.csv
+
+collection/resource.csv:
 	digital-land collection-save-csv
 
 clobber-today::

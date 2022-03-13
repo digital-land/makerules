@@ -76,7 +76,7 @@ collection:: collection/pipeline.mk
 
 -include collection/pipeline.mk
 
-collection/pipeline.mk: collection/resource.csv collection/source.csv
+collection/pipeline.mk: collection/resource.csv
 	digital-land collection-pipeline-makerules > collection/pipeline.mk
 
 # restart the make process to pick-up collected resource files
