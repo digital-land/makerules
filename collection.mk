@@ -35,6 +35,7 @@ first-pass:: collect
 second-pass:: collection
 
 collect:: $(SOURCE_CSV) $(ENDPOINT_CSV)
+	@mkdir -p $(RESOURCE_DIR)
 	digital-land collect $(ENDPOINT_CSV)
 
 collection::
