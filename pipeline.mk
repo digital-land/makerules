@@ -45,6 +45,10 @@ ifeq ($(DATASET_DIR),)
 DATASET_DIR=dataset/
 endif
 
+ifeq ($(HOISTED_DIR),)
+HOISTED_DIR=hoisted/
+endif
+
 ifeq ($(DATASET_DIRS),)
 DATASET_DIRS=\
 	$(TRANSFORMED_DIR)\
@@ -63,6 +67,8 @@ define build-dataset =
 	mkdir -p $(@D)
 	time digital-land --dataset $(notdir $(basename $@)) dataset-create --output-path $(basename $@).sqlite3 $(^)
 	time digital-land --dataset $(notdir $(basename $@)) dataset-entries $(basename $@).sqlite3 $@
+	mkdir -p $(HOISTED_DIR)
+	time digital-land --dataset $(notdir $(basename $@)) dataset-entries-hoisted $@ $(HOISTED_DIR)$(notdir $(basename $@))-hoisted.csv
 	md5sum $@ $(basename $@).sqlite3
 	csvstack $(wildcard $(ISSUE_DIR)/$(notdir $(basename $@))/*.csv) > $(basename $@)-issue.csv
 endef
@@ -110,6 +116,8 @@ save-transformed::
 
 save-dataset::
 	aws s3 sync $(DATASET_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(DATASET_DIR) --no-progress
+	@mkdir -p $(HOISTED_DIR)
+	aws s3 sync $(HOISTED_DIR) s3://$(HOISTED_COLLECTION_DATASET_BUCKET_NAME)/$(HOISTED_DIR) --no-progress
 
 # convert an individual resource
 # .. this assumes conversion is the same for every dataset, but it may not be soon
