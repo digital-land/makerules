@@ -55,7 +55,8 @@ DATASET_DIRS=\
 	$(COLUMN_FIELD_DIR)\
 	$(DATASET_RESOURCE_DIR)\
 	$(ISSUE_DIR)\
-	$(DATASET_DIR)
+	$(DATASET_DIR)\
+	$(HOISTED_DIR)
 endif
 
 define run-pipeline =
