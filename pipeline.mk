@@ -109,8 +109,18 @@ init::
 	@mkdir -p $(CACHE_DIR)
 	curl -qfs "https://raw.githubusercontent.com/digital-land/organisation-dataset/main/collection/organisation.csv" > $(CACHE_DIR)organisation.csv
 
-makerules::
+makerules:: update-github-workflow-for-next-run
 	curl -qfsL '$(SOURCE_URL)/makerules/main/pipeline.mk' > makerules/pipeline.mk
+
+update-github-workflow-for-next-run::
+ifeq ($(GITHUB_REPOSITORY),)
+$(error $$GITHUB_REPOSITORY not set)
+endif
+ifeq $(collection,$(word 2,$(subst -, ,$(GITHUB_REPOSITORY),)))
+	curl -qfsL '$(SOURCE_URL)/makerules/github-workflows/run.yml' > .github/workflows/run.yml
+else
+	echo "Not updating .github/workflows/run.yml from makerules repo, as $(GITHUB_REPOSITORY) is not a collection repository"
+endif
 
 save-transformed::
 	aws s3 sync $(TRANSFORMED_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(TRANSFORMED_DIR) --no-progress
