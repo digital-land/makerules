@@ -130,6 +130,8 @@ save-transformed::
 
 save-dataset::
 	aws s3 sync $(DATASET_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(DATASET_DIR) --no-progress
+
+save-hoisted::
 	@mkdir -p $(HOISTED_DIR)
 	aws s3 sync $(HOISTED_DIR) s3://$(HOISTED_COLLECTION_DATASET_BUCKET_NAME)/ --no-progress
 
