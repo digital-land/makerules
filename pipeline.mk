@@ -49,6 +49,10 @@ ifeq ($(HOISTED_DIR),)
 HOISTED_DIR=hoisted/
 endif
 
+ifeq ($(GITHUB_REPOSITORY),)
+GITHUB_REPOSITORY=$(notdir $(CURDIR))
+endif
+
 ifeq ($(DATASET_DIRS),)
 DATASET_DIRS=\
 	$(TRANSFORMED_DIR)\
@@ -116,10 +120,12 @@ update-github-workflow-for-next-run::
 ifeq ($(GITHUB_REPOSITORY),)
 $(error $$GITHUB_REPOSITORY not set)
 endif
-ifeq $(collection,$(word 2,$(subst -, ,$(GITHUB_REPOSITORY),)))
+# Replace hyphens with spaces to generate a makefile array
+# Find value of last index of repository name array, and check if it equals 'collection'
+ifeq ($(word $(words $(subst -, ,$(GITHUB_REPOSITORY))),$(subst -, ,$(GITHUB_REPOSITORY))),collection)
 	curl -qfsL '$(SOURCE_URL)/makerules/github-workflows/run.yml' > .github/workflows/run.yml
 else
-	echo "Not updating .github/workflows/run.yml from makerules repo, as $(GITHUB_REPOSITORY) is not a collection repository"
+	@echo "Not updating .github/workflows/run.yml from makerules repo, as $(GITHUB_REPOSITORY) is not a collection repository"
 endif
 
 save-transformed::
