@@ -49,6 +49,10 @@ ifeq ($(HOISTED_DIR),)
 HOISTED_DIR=hoisted/
 endif
 
+ifneq ($(CUSTOM_TEMP_DIR),)
+PIPELINE_FLAGS="$(PIPELINE_FLAGS) --custom-temp-dir $(CUSTOM_TEMP_DIR)"
+endif
+
 ifeq ($(DATASET_DIRS),)
 DATASET_DIRS=\
 	$(TRANSFORMED_DIR)\
