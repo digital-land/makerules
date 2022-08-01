@@ -8,6 +8,7 @@ $(error GDAL tools not found in PATH)
 endif
 	sudo apt-get update
 	sudo apt-get install gdal-bin
+	ogr2ogr --version
 endif
 
 makerules::
