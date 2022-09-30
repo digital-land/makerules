@@ -127,6 +127,10 @@ save-dataset::
 	@mkdir -p $(FLATTENED_DIR)
 	aws s3 sync $(FLATTENED_DIR) s3://$(HOISTED_COLLECTION_DATASET_BUCKET_NAME)/data/ --no-progress
 
+save-expectations::
+	@mkdir -p $(EXPECTATION_DIR)results/
+	aws s3 sync $(EXPECTATION_DIR)results/ s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(EXPECTATION_DIR)
+
 # convert an individual resource
 # .. this assumes conversion is the same for every dataset, but it may not be soon
 var/converted/%.csv: collection/resource/%
