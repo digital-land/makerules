@@ -50,7 +50,6 @@ UNAME := $(shell uname)
 # detect location of spatialite library, for linux add to path so python can pick up thhe files
 ifndef SPATIALITE_EXTENSION
 ifeq ($(UNAME), Linux)
-PATH := $(PATH):/usr/lib/x86_64-linux-gnu/
 SPATIALITE_EXTENSION="/usr/lib/x86_64-linux-gnu/mod_spatialite.so"
 endif
 ifeq ($(UNAME), Darwin)
