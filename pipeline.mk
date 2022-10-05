@@ -76,6 +76,10 @@ define build-dataset =
 	mkdir -p $(EXPECTATION_DIR)yamls/data_acceptance/
 	mkdir -p $(EXPECTATION_DIR)results/data_acceptance/$(notdir $(basename $@))
 	-curl -qsfL 'https://raw.githubusercontent.com/digital-land/expectations-config/main/dataset_acceptance/$(notdir $(basename $@)).yaml' > $(EXPECTATION_DIR)yamls/data_acceptance/$(notdir $(basename $@)).yaml
+	FILE=/usr/lib/x86_64-linux-gnu/mod_spatialite.so
+	if test -f "$$FILE"; then \
+		echo "$$FILE exists."; \
+	fi;
 	export PATH=$$PATH:/usr/lib/x86_64-linux-gnu/; time digital-land expectations --results-path "$(EXPECTATION_DIR)results/data_acceptance/$(notdir $(basename $@))" --sqlite-dataset-path "$(basename $@).sqlite3" --data-quality-yaml "$(EXPECTATION_DIR)yamls/data_acceptance/$(notdir $(basename $@)).yaml"
 endef
 
