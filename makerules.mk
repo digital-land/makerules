@@ -144,6 +144,13 @@ $(CACHE_DIR)organisation.csv:
 	@mkdir -p $(CACHE_DIR)
 	curl -qfs "https://raw.githubusercontent.com/digital-land/organisation-dataset/main/collection/organisation.csv" > $(CACHE_DIR)organisation.csv
 
+
+# download la geometry
+$(CACHE_DIR)la_geometry.geojson:
+	@mkdir -p $(CACHE_DIR)
+	curl -qfs "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Local_Authority_Districts_May_2023_UK_BFE_V2/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json" > $(CACHE_DIR)la_geometry.geojson
+
+
 init:: config
 
 config::;

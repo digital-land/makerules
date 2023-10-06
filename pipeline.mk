@@ -139,6 +139,9 @@ clean::
 # local copy of the organisation dataset
 init::	$(CACHE_DIR)organisation.csv
 
+# get local authority geometry data
+init:: $(CACHE_DIR)la_geometry.geojson
+
 makerules::
 	curl -qfsL '$(SOURCE_URL)/makerules/main/pipeline.mk' > makerules/pipeline.mk
 
