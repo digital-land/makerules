@@ -145,11 +145,15 @@ $(CACHE_DIR)organisation.csv:
 	curl -qfs "https://raw.githubusercontent.com/digital-land/organisation-dataset/main/collection/organisation.csv" > $(CACHE_DIR)organisation.csv
 
 
-# download la geometry
-$(CACHE_DIR)la_geometry.geojson:
+# download organisation-lpa relationships
+$(CACHE_DIR)local-authority.csv:
 	@mkdir -p $(CACHE_DIR)
-	curl -qfs "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Local_Authority_Districts_May_2023_UK_BFE_V2/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json" > $(CACHE_DIR)la_geometry.geojson
+	curl -qfs "https://raw.githubusercontent.com/digital-land/organisation-collection/main/data/local-authority.csv" > $(CACHE_DIR)local-authority.csv
 
+# download lpa geometry
+$(CACHE_DIR)lpa-geometry.csv:
+	@mkdir -p $(CACHE_DIR)
+	curl -qfs "https://datasette.planning.data.gov.uk/entity.csv?sql=select+geometry%2C+reference+from+entity+where+%22dataset%22+%3D+%3Ap0+order+by+entity+limit+101&p0=local-planning-authority&_size=max" > $(CACHE_DIR)lpa-geometry.csv
 
 init:: config
 
