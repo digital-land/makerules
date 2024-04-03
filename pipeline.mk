@@ -102,9 +102,9 @@ define build-dataset =
 	md5sum $@ $(basename $@).sqlite3
 	csvstack $(ISSUE_DIR)$(notdir $(basename $@))/*.csv > $(basename $@)-issue.csv
 	mkdir -p $(EXPECTATION_DIR)
-	time digital-land expectations-dataset-checkpoint --output-dir=$(EXPECTATION_DIR) --specification-dir=specification --data-path=dataset/$(basename $@).sqlite3
-	csvstack $(EXPECTATION_DIR)/**/*-responses.csv > $(basename $@)-expecation-response.csv
-	csvstack $(EXPECTATION_DIR)/**/*-issues.csv > $(basename $@)-expecation-issue.csv
+	time digital-land expectations-dataset-checkpoint --output-dir=$(EXPECTATION_DIR) --specification-dir=specification --data-path=$(basename $@).sqlite3
+	csvstack $(EXPECTATION_DIR)/**/*-responses.csv > $(basename $@)-expectation-response.csv
+	csvstack $(EXPECTATION_DIR)/**/*-issues.csv > $(basename $@)-expectation-issue.csv
 endef
 
 collection::
@@ -162,7 +162,7 @@ endif
 
 save-expectations::
 	@mkdir -p $(EXPECTATION_DIR)
-	aws s3 sync $(EXPECTATION_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(EXPECTATION_DIR) --exclude "*" --include "*.csv"
+	aws s3 sync $(EXPECTATION_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(EXPECTATION_DIR) --no-progress
 
 # convert an individual resource
 # .. this assumes conversion is the same for every dataset, but it may not be soon
