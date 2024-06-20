@@ -76,6 +76,8 @@ SPATIALITE_EXTENSION="/usr/local/lib/mod_spatialite.dylib"
 endif
 endif
 
+include makerules/docker.mk
+
 all:: first-pass second-pass
 
 first-pass::

@@ -107,8 +107,11 @@ define build-dataset =
 	csvstack $(EXPECTATION_DIR)/**/$(notdir $(basename $@))-issues.csv > $(basename $@)-expectation-issue.csv
 endef
 
+ifneq ($(DOCKERISED),1)
 collection::
 	digital-land ${DIGITAL_LAND_OPTS} collection-pipeline-makerules > collection/pipeline.mk
+
+endif
 
 -include collection/pipeline.mk
 
