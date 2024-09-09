@@ -43,6 +43,7 @@ endif
 
 ifeq ($(OPERATIONAL_ISSUE_DIR),)
 OPERATIONAL_ISSUE_DIR=operational_issue/
+OPERATIONAL_ISSUE_TODAY:=$(OPERATIONAL_ISSUE_DIR)$(shell date +%Y-%m-%d)/
 endif
 
 ifeq ($(COLUMN_FIELD_DIR),)
@@ -154,6 +155,7 @@ makerules::
 save-transformed::
 	aws s3 sync $(TRANSFORMED_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(TRANSFORMED_DIR) --no-progress
 	aws s3 sync $(ISSUE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(ISSUE_DIR) --no-progress
+	aws s3 sync $(OPERATIONAL_ISSUE_DIR)operational_issue s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(OPERATIONAL_ISSUE_DIR)operational_issue --no-progress
 	aws s3 sync $(COLUMN_FIELD_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(COLUMN_FIELD_DIR) --no-progress
 	aws s3 sync $(DATASET_RESOURCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(DATASET_RESOURCE_DIR) --no-progress
 
