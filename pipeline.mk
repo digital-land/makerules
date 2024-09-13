@@ -41,6 +41,10 @@ ifeq ($(ISSUE_DIR),)
 ISSUE_DIR=issue/
 endif
 
+ifeq ($(PERFORMANCE_DIR),)
+PERFORMANCE_DIR=performance/
+endif
+
 ifeq ($(OPERATIONAL_ISSUE_DIR),)
 OPERATIONAL_ISSUE_DIR=operational_issue/
 OPERATIONAL_ISSUE_TODAY:=$(OPERATIONAL_ISSUE_DIR)$(shell date +%Y-%m-%d)/
@@ -68,7 +72,7 @@ DATASET_DIRS=\
 	$(COLUMN_FIELD_DIR)\
 	$(DATASET_RESOURCE_DIR)\
 	$(ISSUE_DIR)\
-	$(OPERATIONAL_ISSUE_DIR)\
+	$(PERFORMANCE_DIR)\
 	$(DATASET_DIR)\
 	$(FLATTENED_DIR)
 endif
@@ -94,7 +98,7 @@ PIPELINE_CONFIG_FILES=\
 endif
 
 define run-pipeline
-	mkdir -p $(@D) $(ISSUE_DIR)$(notdir $(@D)) $(OPERATIONAL_ISSUE_DIR) $(COLUMN_FIELD_DIR)$(notdir $(@D)) $(DATASET_RESOURCE_DIR)$(notdir $(@D))
+	mkdir -p $(@D) $(ISSUE_DIR)$(notdir $(@D)) $(PERFORMANCE_DIR)$(OPERATIONAL_ISSUE_DIR) $(COLUMN_FIELD_DIR)$(notdir $(@D)) $(DATASET_RESOURCE_DIR)$(notdir $(@D))
 	digital-land ${DIGITAL_LAND_OPTS} --dataset $(notdir $(@D)) --pipeline-dir $(PIPELINE_DIR) $(DIGITAL_LAND_FLAGS) pipeline $(1) --organisation-path $(CACHE_DIR)organisation.csv --issue-dir $(ISSUE_DIR)$(notdir $(@D)) --column-field-dir $(COLUMN_FIELD_DIR)$(notdir $(@D)) --dataset-resource-dir $(DATASET_RESOURCE_DIR)$(notdir $(@D)) $(PIPELINE_FLAGS) $< $@
 endef
 
