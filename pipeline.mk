@@ -47,7 +47,6 @@ endif
 
 ifeq ($(OPERATIONAL_ISSUE_DIR),)
 OPERATIONAL_ISSUE_DIR=operational_issue/
-OPERATIONAL_ISSUE_TODAY:=$(OPERATIONAL_ISSUE_DIR)$(shell date +%Y-%m-%d)/
 endif
 
 ifeq ($(COLUMN_FIELD_DIR),)
