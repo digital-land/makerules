@@ -150,7 +150,15 @@ clean::
 	rm -rf ./var
 
 # local copy of the organisation dataset
-init::	$(CACHE_DIR)organisation.csv
+init::	
+	$(CACHE_DIR)organisation.csv
+	$(eval OPERATIONAL_ISSUE_STATUS_CODE := $(shell curl -I -o /dev/null -s -w "%{http_code}" '$(DATASTORE_URL)$(REPOSITORY)/$(COLLECTION_DIR)log.csv'))
+	@if [ $(OPERATIONAL_ISSUE_STATUS_CODE) -ne 403 ]; then \
+		echo 'Downloading operational_issue csv'; \
+		curl -qfsL '$(DATASTORE_URL)$(REPOSITORY)/$(OPERATIONAL_ISSUE_DIR)' > $(OPERATIONAL_ISSUE_DIR) \
+	else \
+		echo 'Unable to locate operational-issue.csv' ;\
+	fi
 
 makerules::
 	curl -qfsL '$(SOURCE_URL)/makerules/main/pipeline.mk' > makerules/pipeline.mk
@@ -175,6 +183,8 @@ save-expectations::
 	@mkdir -p $(EXPECTATION_DIR)
 	aws s3 sync $(EXPECTATION_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(EXPECTATION_DIR) --exclude "*" --include "*.csv" --no-progress
 
+save-operational-issue::
+	digital-land ${DIGITAL_LAND_OPTS} operational-issue-save-csv --operational-issue-dir $(OPERATIONAL_ISSUE_DIR)
 # convert an individual resource
 # .. this assumes conversion is the same for every dataset, but it may not be soon
 var/converted/%.csv: collection/resource/%
