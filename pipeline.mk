@@ -152,13 +152,19 @@ clean::
 # local copy of the organisation dataset
 init::	
 	$(CACHE_DIR)organisation.csv
-	$(eval OPERATIONAL_ISSUE_STATUS_CODE := $(shell curl -I -o /dev/null -s -w "%{http_code}" '$(DATASTORE_URL)$(REPOSITORY)/$(COLLECTION_DIR)log.csv'))
-	@if [ $(OPERATIONAL_ISSUE_STATUS_CODE) -ne 403 ]; then \
-		echo 'Downloading operational_issue csv'; \
-		curl -qfsL '$(DATASTORE_URL)$(REPOSITORY)/$(OPERATIONAL_ISSUE_DIR)' > $(OPERATIONAL_ISSUE_DIR) \
-	else \
-		echo 'Unable to locate operational-issue.csv' ;\
-	fi
+	@datasets=$$(awk -F , '$$2 == "$(COLLECTION_NAME)" {print $$4}' specification/dataset.csv); \
+	for dataset in $$datasets; do \
+		url="$(DATASTORE_URL)$(OPERATIONAL_ISSUE_DIR)$$dataset/operational-issue.csv"; \
+		echo "Downloading operational issue log for $$dataset at url $$url";\
+		status_code=$$(curl --write-out "%{http_code}" --silent --output /dev/null "$$url"); \
+		if [ "$$status_code" -eq 200 ]; then \
+			echo "Downloading file..."; \
+			curl --silent --output "$(OPERATIONAL_ISSUE_DIR)/$$dataset/operational-issue.csv" "$$url"; \
+			echo "Log downloaded to $(OPERATIONAL_ISSUE_DIR)/$$dataset/operational-issue.csv"; \
+		else \
+			echo "File not found at $$url"; \
+		fi; \
+	done
 
 makerules::
 	curl -qfsL '$(SOURCE_URL)/makerules/main/pipeline.mk' > makerules/pipeline.mk
