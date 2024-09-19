@@ -151,6 +151,7 @@ clean::
 	rm -rf ./var
 
 # local copy of the organisation dataset
+# Download historic operational issue log data for relevant datasets
 init::	
 	$(CACHE_DIR)organisation.csv
 	@datasets=$$(awk -F , '$$2 == "$(COLLECTION_NAME)" {print $$4}' specification/dataset.csv); \
@@ -190,8 +191,6 @@ save-expectations::
 	@mkdir -p $(EXPECTATION_DIR)
 	aws s3 sync $(EXPECTATION_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(EXPECTATION_DIR) --exclude "*" --include "*.csv" --no-progress
 
-save-operational-issue::
-	digital-land ${DIGITAL_LAND_OPTS} operational-issue-save-csv --operational-issue-dir $(OPERATIONAL_ISSUE_DIR)
 # convert an individual resource
 # .. this assumes conversion is the same for every dataset, but it may not be soon
 var/converted/%.csv: collection/resource/%
