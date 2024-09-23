@@ -93,7 +93,8 @@ PIPELINE_CONFIG_FILES=\
 	$(PIPELINE_DIR)old-entity.csv\
 	$(PIPELINE_DIR)patch.csv\
 	$(PIPELINE_DIR)skip.csv\
-	$(PIPELINE_DIR)transform.csv
+	$(PIPELINE_DIR)transform.csv\
+	$(PIPELINE_DIR)entity-organisation.csv
 endif
 
 define run-pipeline
