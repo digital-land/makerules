@@ -205,6 +205,7 @@ $(PIPELINE_DIR)%.csv:
 	fi
 
 config:: $(PIPELINE_CONFIG_FILES)
+	mkdir -p $(CACHE_DIR)
 	digital-land --pipeline-dir $(PIPELINE_DIR) config-create --config-path $(CACHE_DIR)config.sqlite3
 	digital-land --pipeline-dir $(PIPELINE_DIR) config-load --config-path $(CACHE_DIR)config.sqlite3
 
