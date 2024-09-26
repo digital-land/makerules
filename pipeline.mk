@@ -191,11 +191,13 @@ ifeq ($(HOISTED_COLLECTION_DATASET_BUCKET_NAME),digital-land-$(ENVIRONMENT)-coll
 else
 	aws s3 sync $(FLATTENED_DIR) s3://$(HOISTED_COLLECTION_DATASET_BUCKET_NAME)/dataset/ --no-progress --content-disposition attachment
 endif
-	aws s3 sync $(PERFORMANCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(PERFORMANCE_DIR) --no-progress
 
 save-expectations::
 	@mkdir -p $(EXPECTATION_DIR)
 	aws s3 sync $(EXPECTATION_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(EXPECTATION_DIR) --exclude "*" --include "*.csv" --no-progress
+
+save-performance::
+	aws s3 sync $(PERFORMANCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(PERFORMANCE_DIR) --no-progress
 
 # convert an individual resource
 # .. this assumes conversion is the same for every dataset, but it may not be soon
