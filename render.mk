@@ -70,7 +70,7 @@ clobber-docs::
 	rm -rf $(DOCS_DIR)
 
 makerules::
-	curl -qfsL '$(SOURCE_URL)/makerules/main/render.mk' > makerules/render.mk
+	curl -qfsL '$(MAKERULES_URL)render.mk' > makerules/render.mk
 
 commit-docs::
 	git add docs
