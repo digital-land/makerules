@@ -108,9 +108,6 @@ collection/%.csv:
 	@mkdir -p $(COLLECTION_DIR)
 	curl -qfsL '$(COLLECTION_CONFIG_URL)$(notdir $@)' > $@
 
-collection/$(COLLECTION)/%.csv:
-	curl -qfsL '$(COLLECTION_URL)/collection/$(notdir $@)' > $@
-
 config:: $(COLLECTION_CONFIG_FILES)
 
 clean::
