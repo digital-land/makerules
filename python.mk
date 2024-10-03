@@ -40,4 +40,4 @@ upload::	dist
 	twine upload dist/*
 
 makerules::
-	curl -qfsL '$(SOURCE_URL)/makerules/main/python.mk' > makerules/python.mk
+	curl -qfsL '$(MAKERULES_URL)python.mk' > makerules/python.mk
