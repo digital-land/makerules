@@ -46,7 +46,7 @@ ISSUE_DIR=issue/
 endif
 
 ifeq ($(ISSUE_PARQUET_DIR),)
-ISSUE_PARQUET_DIR=$(ISSUE_DIR)/parquet/
+ISSUE_PARQUET_DIR=$(ISSUE_DIR)parquet/
 endif
 
 
