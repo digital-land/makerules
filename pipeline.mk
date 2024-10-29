@@ -45,8 +45,12 @@ ifeq ($(ISSUE_DIR),)
 ISSUE_DIR=issue/
 endif
 
+ifeq ($(OUTPUT_LOG_DIR),)
+OUTPUT_LOG_DIR=log/
+endif
+
 ifeq ($(ISSUE_PARQUET_DIR),)
-ISSUE_PARQUET_DIR=$(ISSUE_DIR)parquet/
+ISSUE_PARQUET_DIR=$(OUTPUT_LOG_DIR)issue/
 endif
 
 
