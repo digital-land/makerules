@@ -49,11 +49,6 @@ ifeq ($(OUTPUT_LOG_DIR),)
 OUTPUT_LOG_DIR=log/
 endif
 
-ifeq ($(ISSUE_PARQUET_DIR),)
-ISSUE_PARQUET_DIR=$(OUTPUT_LOG_DIR)issue/
-endif
-
-
 ifeq ($(PERFORMANCE_DIR),)
 PERFORMANCE_DIR=performance/
 endif
@@ -192,7 +187,6 @@ makerules::
 	curl -qfsL '$(MAKERULES_URL)pipeline.mk' > makerules/pipeline.mk
 
 save-transformed::
-	digital-land convert_csvs_to_parquet --input-dir $(ISSUE_DIR) --output-dir $(ISSUE_PARQUET_DIR)
 	aws s3 sync $(TRANSFORMED_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(TRANSFORMED_DIR) --no-progress
 	aws s3 sync $(ISSUE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(ISSUE_DIR) --no-progress
 	aws s3 sync $(COLUMN_FIELD_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(COLUMN_FIELD_DIR) --no-progress
