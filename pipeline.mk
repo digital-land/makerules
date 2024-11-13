@@ -207,8 +207,8 @@ else
 endif
 
 save-expectations::
-	@mkdir -p $(EXPECTATION_DIR)
-	aws s3 sync $(EXPECTATION_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(EXPECTATION_DIR) --exclude "*" --include "*.csv" --no-progress
+	@mkdir -p $(OUTPUT_LOG_DIR)
+	aws s3 sync $(OUTPUT_LOG_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(OUTPUT_LOG_DIR) --no-progress
 
 save-performance::
 	@mkdir -p $(PERFORMANCE_DIR)
