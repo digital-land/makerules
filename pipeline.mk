@@ -185,6 +185,11 @@ init::	$(CACHE_DIR)organisation.csv
 		fi; \
 	done
 
+# local copy of local-authority for organisation-lpa relationship
+init:: $(CACHE_DIR)local-authority.csv
+
+init:: $(CACHE_DIR)lpa-geometry.csv
+
 makerules::
 	curl -qfsL '$(MAKERULES_URL)pipeline.mk' > makerules/pipeline.mk
 
