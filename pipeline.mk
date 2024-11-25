@@ -232,14 +232,12 @@ datasette:	metadata.json
 	--load-extension $(SPATIALITE_EXTENSION) \
 	--metadata metadata.json
 
-FALLBACK_CONFIG_URL := https://files.planning.data.gov.uk/config/pipeline/$(COLLECTION_NAME)/
-
 $(PIPELINE_DIR)%.csv:
 	@mkdir -p $(PIPELINE_DIR)
 	@if [ ! -f $@ ]; then \
-		echo "Config file $@ not found locally. Attempting to download..."; \
+		echo "Config file $@ not found locally. Attempting to download from s3...."; \
 		curl -qfsL '$(PIPELINE_CONFIG_URL)$(notdir $@)' -o $@ || \
-		(echo "File not found in config repo. Attempting to download from AWS..." && curl -qfsL '$(FALLBACK_CONFIG_URL)$(notdir $@)' -o $@); \
+		(echo "File not found in config repo: $(notdir $@)" && exit 1); \
 	fi
 
 config:: $(PIPELINE_CONFIG_FILES)
