@@ -242,7 +242,7 @@ datasette:	metadata.json
 $(PIPELINE_DIR)%.csv:
 	@mkdir -p $(PIPELINE_DIR)
 	@if [ ! -f $@ ]; then \
-		echo "Config file $@ not found locally. Attempting to download from s3...."; \
+		echo "Config file $@ not found locally. Attempting to download from $(PIPELINE_CONFIG_URL)$(notdir $@)...."; \
 		curl -qfsL '$(PIPELINE_CONFIG_URL)$(notdir $@)?version=$(shell date +%s)' -o $@ || \
 		(echo "File not found in config repo: $(notdir $@)" && exit 1); \
 	fi
