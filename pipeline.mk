@@ -168,14 +168,14 @@ clean::
 
 # local copy of the organisation dataset
 # Download historic operational issue log data for relevant datasets
-init::	$(CACHE_DIR)organisation.csv
-	@mkdir -p $(OPERATIONAL_ISSUE_DIR)
+init:: $(CACHE_DIR)organisation.csv
+ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
 	@datasets=$$(awk -F , '$$2 == "$(COLLECTION_NAME)" {print $$4}' specification/dataset.csv); \
 	for dataset in $$datasets; do \
 		mkdir -p $(OPERATIONAL_ISSUE_DIR)$$dataset; \
 		url="$(DATASTORE_URL)$(OPERATIONAL_ISSUE_DIR)$$dataset/operational-issue.csv"; \
 		echo "Downloading operational issue log for $$dataset at url $$url";\
-		status_code=$$(curl --write-out "%{http_code}" --silent --output /dev/null "$$url"); \
+		status_code=$$(curl --write-out "%{http_code}" --head --silent --output /dev/null "$$url"); \
 		if [ "$$status_code" -eq 200 ]; then \
 			echo "Downloading file..."; \
 			curl --silent --output "$(OPERATIONAL_ISSUE_DIR)$$dataset/operational-issue.csv" "$$url"; \
@@ -184,6 +184,13 @@ init::	$(CACHE_DIR)organisation.csv
 			echo "File not found at $$url"; \
 		fi; \
 	done
+else
+	@datasets=$$(awk -F , '$$2 == "$(COLLECTION_NAME)" {print $$4}' specification/dataset.csv); \
+	for dataset in $$datasets; do \
+		mkdir -p $(OPERATIONAL_ISSUE_DIR)$$dataset; \
+		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(OPERATIONAL_ISSUE_DIR)$$dataset/operational-issue.csv $(OPERATIONAL_ISSUE_DIR)/$$dataset/operational-issue.csv --no-progress; \
+	done
+endif
 
 makerules::
 	curl -qfsL '$(MAKERULES_URL)pipeline.mk' > makerules/pipeline.mk
@@ -240,10 +247,18 @@ $(PIPELINE_DIR)%.csv:
 		(echo "File not found in config repo: $(notdir $@)" && exit 1); \
 	fi
 
+ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
 config:: $(PIPELINE_CONFIG_FILES)
 ifeq ($(PIPELINE_CONFIG_FILES), .dummy)
 	echo "pipeline_config_files are dummy not making config.sqlite" 
 else
+	mkdir -p $(CACHE_DIR)
+	digital-land --pipeline-dir $(PIPELINE_DIR) config-create --config-path $(CACHE_DIR)config.sqlite3
+	digital-land --pipeline-dir $(PIPELINE_DIR) config-load --config-path $(CACHE_DIR)config.sqlite3
+endif
+else
+config::
+	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/config/$(PIPELINE_DIR)$(COLLECTION_NAME) $(PIPELINE_DIR) --no-progress
 	mkdir -p $(CACHE_DIR)
 	digital-land --pipeline-dir $(PIPELINE_DIR) config-create --config-path $(CACHE_DIR)config.sqlite3
 	digital-land --pipeline-dir $(PIPELINE_DIR) config-load --config-path $(CACHE_DIR)config.sqlite3

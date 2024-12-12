@@ -51,6 +51,7 @@ COLLECTION_URL=\
 	$(DATASTORE_URL)$(REPOSITORY)/collection
 endif
 
+ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
 init::
 	$(eval LOG_STATUS_CODE := $(shell curl -I -o /dev/null -s -w "%{http_code}" '$(COLLECTION_URL)/log.csv'))
 	$(eval RESOURCE_STATUS_CODE = $(shell curl -I -o /dev/null -s -w "%{http_code}" '$(COLLECTION_URL)/resource.csv'))
@@ -61,6 +62,7 @@ init::
 	else \
 		echo 'Unable to locate log.csv and resource.csv' ;\
 	fi
+endif
 
 first-pass:: collect
 
@@ -78,10 +80,6 @@ clobber-today::
 
 makerules::
 	curl -qfsL '$(MAKERULES_URL)collection.mk' > makerules/collection.mk
-
-commit-collection::
-	git add collection/log
-	git diff --quiet && git diff --staged --quiet || (git commit -m "Collection $(shell date +%F)"; git push origin $(BRANCH))
 
 load-resources::
 	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR) $(RESOURCE_DIR) --no-progress
@@ -101,19 +99,17 @@ ifneq ($(wildcard $(COLLECTION_DIR)old-resource.csv),)
 	aws s3 cp $(COLLECTION_DIR)old-resource.csv s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(COLLECTION_DIR) --no-progress
 endif
 
-collection/resource/%:
-	@mkdir -p collection/resource/
-	curl -qfsL '$(DATASTORE_URL)$(REPOSITORY)/$(RESOURCE_DIR)$(notdir $@)' > $@
-
-collection/$(COLLECTION)/resource/%:
-	@mkdir -p collection/resource/
-	curl -qfsL '$(COLLECTION_URL)/resource/$(notdir $@)' > $@
-
 collection/%.csv:
 	@mkdir -p $(COLLECTION_DIR)
 	curl -qfsL '$(COLLECTION_CONFIG_URL)$(notdir $@)?version=$(shell date +%s)' > $@
 
+
+ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
 config:: $(COLLECTION_CONFIG_FILES)
+else
+config::
+	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/config/$(COLLECTION_DIR)$(COLLECTION_NAME) $(COLLECTION_DIR) --no-progress
+endif
 
 clean::
 	rm -f $(COLLECTION_CONFIG_FILES)
