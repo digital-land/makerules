@@ -107,6 +107,22 @@ else
 	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/config/$(COLLECTION_DIR)$(COLLECTION_NAME)/$(notdir $@) $@ --no-progress
 endif
 
+collection/resource/%:
+	@mkdir -p collection/resource/
+ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
+	curl -qfsL '$(DATASTORE_URL)$(REPOSITORY)/$(RESOURCE_DIR)$(notdir $@)' > $@
+else
+	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)$(RESOURCE_DIR)$()/$(notdir $@) $@ --no-progress
+endif
+
+collection/$(COLLECTION)/resource/%:
+	@mkdir -p collection/$(COLLECTION)/resource
+ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
+	curl -qfsL '$(DATASTORE_URL)$(REPOSITORY)/$(RESOURCE_DIR)$(notdir $@)' > $@
+else
+	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)$(RESOURCE_DIR)/$(notdir $@) $@ --no-progress
+endif
+
 config:: $(COLLECTION_CONFIG_FILES)
 
 clean::
