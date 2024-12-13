@@ -101,15 +101,13 @@ endif
 
 collection/%.csv:
 	@mkdir -p $(COLLECTION_DIR)
-	curl -qfsL '$(COLLECTION_CONFIG_URL)$(notdir $@)?version=$(shell date +%s)' > $@
-
-
 ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
-config:: $(COLLECTION_CONFIG_FILES)
+	curl -qfsL '$(COLLECTION_CONFIG_URL)$(notdir $@)?version=$(shell date +%s)' > $@
 else
-config::
-	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/config/$(COLLECTION_DIR)$(COLLECTION_NAME) $(COLLECTION_DIR) --no-progress
+	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/config/$(COLLECTION_DIR)$(COLLECTION_NAME)/$(notdir $@) $@ --no-progress
 endif
+
+config:: $(COLLECTION_CONFIG_FILES)
 
 clean::
 	rm -f $(COLLECTION_CONFIG_FILES)
