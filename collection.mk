@@ -104,7 +104,7 @@ collection/resource/%:
 ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
 	curl -qfsL '$(DATASTORE_URL)$(REPOSITORY)/$(RESOURCE_DIR)$(notdir $@)' > $@
 else
-	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)$(RESOURCE_DIR)$()/$(notdir $@) $@ --no-progress
+	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR)$()/$(notdir $@) $@ --no-progress
 endif
 
 collection/$(COLLECTION)/resource/%:
@@ -112,7 +112,7 @@ collection/$(COLLECTION)/resource/%:
 ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
 	curl -qfsL '$(DATASTORE_URL)$(REPOSITORY)/$(RESOURCE_DIR)$(notdir $@)' > $@
 else
-	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)$(RESOURCE_DIR)/$(notdir $@) $@ --no-progress
+	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR)/$(notdir $@) $@ --no-progress
 endif
 
 collection/%.csv:
