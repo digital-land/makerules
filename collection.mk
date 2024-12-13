@@ -111,7 +111,7 @@ collection/$(COLLECTION)/resource/%:
 
 collection/%.csv:
 	@mkdir -p $(COLLECTION_DIR)
-	curl -qfsL '$(COLLECTION_CONFIG_URL)$(notdir $@)' > $@
+	curl -qfsL '$(COLLECTION_CONFIG_URL)$(notdir $@)?version=$(shell date +%s)' > $@
 
 config:: $(COLLECTION_CONFIG_FILES)
 
