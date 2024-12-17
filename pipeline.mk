@@ -136,7 +136,7 @@ endef
 collection::
 	digital-land ${DIGITAL_LAND_OPTS} collection-pipeline-makerules --collection-dir $(COLLECTION_DIR) > $(COLLECTION_DIR)pipeline.mk
 
--include $(COLLECTION_DIR)/pipeline.mk
+-include $(COLLECTION_DIR)pipeline.mk
 
 # restart the make process to pick-up collected resource files
 second-pass::
