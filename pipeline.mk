@@ -196,6 +196,7 @@ makerules::
 	curl -qfsL '$(MAKERULES_URL)pipeline.mk' > makerules/pipeline.mk
 
 save-transformed::
+	@mkdir -p $(TRANSFORMED_DIR) $(ISSUE_DIR) $(COLUMN_FIELD_DIR) $(DATASET_RESOURCE_DIR) $(CONVERTED_RESOURCE_DIR)
 	aws s3 sync $(TRANSFORMED_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(TRANSFORMED_DIR) --no-progress
 	aws s3 sync $(ISSUE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(ISSUE_DIR) --no-progress
 	aws s3 sync $(COLUMN_FIELD_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(COLUMN_FIELD_DIR) --no-progress
@@ -204,9 +205,8 @@ save-transformed::
 	aws s3 sync $(OUTPUT_LOG_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(OUTPUT_LOG_DIR) --no-progress
 
 save-dataset::
-	@mkdir -p $(DATASET_DIR)
+	@mkdir -p $(DATASET_DIR) $(FLATTENED_DIR)
 	aws s3 sync $(DATASET_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(DATASET_DIR) --no-progress
-	@mkdir -p $(FLATTENED_DIR)
 ifeq ($(HOISTED_COLLECTION_DATASET_BUCKET_NAME),digital-land-$(ENVIRONMENT)-collection-dataset-hoisted)
 	aws s3 sync $(FLATTENED_DIR) s3://$(HOISTED_COLLECTION_DATASET_BUCKET_NAME)/data/ --no-progress
 else
