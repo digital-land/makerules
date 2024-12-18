@@ -62,6 +62,8 @@ init::
 	else \
 		echo 'Unable to locate log.csv and resource.csv' ;\
 	fi
+else 
+	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(LOG_DIR) $(LOG_DIR)
 endif
 
 first-pass:: collect
