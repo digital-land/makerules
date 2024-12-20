@@ -63,7 +63,7 @@ ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
 		echo 'Unable to locate log.csv and resource.csv' ;\
 	fi
 else 
-	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(LOG_DIR) $(LOG_DIR)
+	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(LOG_DIR) $(LOG_DIR) --no-progress
 endif
 
 first-pass:: collect
