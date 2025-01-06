@@ -62,8 +62,14 @@ ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
 	else \
 		echo 'Unable to locate log.csv and resource.csv' ;\
 	fi
-else 
-	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(LOG_DIR) $(LOG_DIR) --only-show-errors
+else
+    ifeq ($($REGENERATE_LOG_OVERRIDE),)
+        aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv collection/log.csv --only-show-errors; \
+        aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv collection/resource.csv --only-show-errors
+    else \
+		echo 'Syncing log files to local'; \
+    	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(LOG_DIR) $(LOG_DIR) --only-show-errors
+    fi
 endif
 
 first-pass:: collect
