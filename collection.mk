@@ -76,7 +76,7 @@ second-pass:: collection
 
 collect:: $(COLLECTION_CONFIG_FILES)
 	@mkdir -p $(RESOURCE_DIR)
-	digital-land ${DIGITAL_LAND_OPTS} collect $(ENDPOINT_CSV) --collection-dir $(COLLECTION_DIR)
+	digital-land ${DIGITAL_LAND_OPTS} collect $(ENDPOINT_CSV) --collection-dir $(COLLECTION_DIR) --force-refetch $(REFILL_TODAYS_LOGS)
 
 collection::
 	digital-land ${DIGITAL_LAND_OPTS} collection-save-csv --collection-dir $(COLLECTION_DIR)
