@@ -192,10 +192,10 @@ else
 	@datasets=$$(awk -F , '$$2 == "$(COLLECTION_NAME)" {print $$4}' specification/dataset.csv); \
 	for dataset in $$datasets; do \
 		mkdir -p $(OPERATIONAL_ISSUE_DIR)$$dataset; \
-		url = $(COLLECTION_DATASET_BUCKET_NAME)/$(OPERATIONAL_ISSUE_DIR)$$dataset/operational-issue.csv \
-		exists=$(aws s3 ls $$url); \
+		url="$(COLLECTION_DATASET_BUCKET_NAME)/$(OPERATIONAL_ISSUE_DIR)$$dataset/operational-issue.csv"; \
+		exists="$(aws s3 ls $$url)"; \
 		if [ $$exists ]; then \
-			aws s3 cp s3://url $(OPERATIONAL_ISSUE_DIR)/$$dataset/operational-issue.csv --no-progress || true; \
+			aws s3 cp s3://url $(OPERATIONAL_ISSUE_DIR)/$$dataset/operational-issue.csv --no-progress; \
 		else \
 			echo "File not found at $$url"; \
 		fi; \
