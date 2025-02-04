@@ -174,7 +174,11 @@ clean::
 # Download historic operational issue log data for relevant datasets
 init:: $(CACHE_DIR)organisation.csv
 ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
+	echo "hello before @datsets" 
 	@datasets=$$(awk -F , '$$2 == "$(COLLECTION_NAME)" {print $$4}' specification/dataset.csv); \
+	echo "hello after @datasets"
+	echo "collection name":
+	echo $COLLECTION_NAME
 	for dataset in $$datasets; do \
 		mkdir -p $(OPERATIONAL_ISSUE_DIR)$$dataset; \
 		url="$(DATASTORE_URL)$(OPERATIONAL_ISSUE_DIR)$$dataset/operational-issue.csv"; \
