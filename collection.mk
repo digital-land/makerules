@@ -20,7 +20,7 @@ ifeq ($(DATASTORE_URL),)
 DATASTORE_URL=https://files.planning.data.gov.uk/
 endif
 
-ifeq ($(REGENERATE_LOG_OVERRIDE),true)
+ifeq ($(REGENERATE_LOG_OVERRIDE),True)
 REFILL_TODAYS_LOGS=false
 else
 REFILL_TODAYS_LOGS=true
