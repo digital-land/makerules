@@ -84,6 +84,7 @@ collect:: $(COLLECTION_CONFIG_FILES)
 
 collection::
 	digital-land ${DIGITAL_LAND_OPTS} collection-save-csv --collection-dir $(COLLECTION_DIR) --refill-todays-logs $(REFILL_TODAYS_LOGS)
+	cat collection/log.csv
 
 clobber-today::
 	rm -rf $(LOG_FILES_TODAY) $(COLLECTION_INDEX)
