@@ -194,10 +194,11 @@ else
 		mkdir -p $(OPERATIONAL_ISSUE_DIR)$$dataset; \
 		url="$(COLLECTION_DATASET_BUCKET_NAME)/$(OPERATIONAL_ISSUE_DIR)$$dataset/operational-issue.csv"; \
 		exists="$(aws s3 ls $$url)"; \
-		if [ $$exists ]; then \
-			aws s3 cp s3://url $(OPERATIONAL_ISSUE_DIR)/$$dataset/operational-issue.csv --no-progress; \
-		else \
+		echo $$exists
+		if [ -z $$exists ]; then \
 			echo "File not found at $$url"; \
+		else \
+			aws s3 cp s3://url $(OPERATIONAL_ISSUE_DIR)/$$dataset/operational-issue.csv --no-progress; \
 		fi; \
 	done
 endif
