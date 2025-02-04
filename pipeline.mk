@@ -194,7 +194,7 @@ else
 		mkdir -p $(OPERATIONAL_ISSUE_DIR)$$dataset; \
 		url="$(COLLECTION_DATASET_BUCKET_NAME)/$(OPERATIONAL_ISSUE_DIR)$$dataset/operational-issue.csv"; \
 		exists="$(aws s3 ls $$url)"; \
-		echo $$exists
+		echo $$exists; \
 		if [ -z $$exists ]; then \
 			echo "File not found at $$url"; \
 		else \
