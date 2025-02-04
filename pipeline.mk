@@ -173,6 +173,7 @@ clean::
 # local copy of the organisation dataset
 # Download historic operational issue log data for relevant datasets
 init:: $(CACHE_DIR)organisation.csv
+	echo "hello after organisation.csv"
 ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
 	echo "hello before @datsets" 
 	@datasets=$$(awk -F , '$$2 == "$(COLLECTION_NAME)" {print $$4}' specification/dataset.csv); \

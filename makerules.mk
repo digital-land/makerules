@@ -147,6 +147,7 @@ endif
 
 # local copy of organsiation datapackage
 $(CACHE_DIR)organisation.csv:
+	echo "hello in organisation.csv"
 	@mkdir -p $(CACHE_DIR)
 ifneq ($(COLLECTION_DATASET_BUCKET_NAME),)
 	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/organisation-collection/dataset/organisation.csv $(CACHE_DIR)organisation.csv
