@@ -174,8 +174,8 @@ clean::
 # Download historic operational issue log data for relevant datasets
 init:: $(CACHE_DIR)organisation.csv
 	echo "hello after organisation.csv"
-	echo "collection dataset bucket name:"
-	echo $(COLLECTION_DATASET_BUCKET_NAME)
+	echo "collection dataset bucket name 2:"
+	echo "$(COLLECTION_DATASET_BUCKET_NAME)"
 ifeq ($(COLLECTION_DATASET_BUCKET_NAME),)
 	echo "hello before @datsets" 
 	@datasets=$$(awk -F , '$$2 == "$(COLLECTION_NAME)" {print $$4}' specification/dataset.csv); \
@@ -199,6 +199,7 @@ else
 	@datasets=$$(awk -F , '$$2 == "$(COLLECTION_NAME)" {print $$4}' specification/dataset.csv); \
 	for dataset in $$datasets; do \
 		mkdir -p $(OPERATIONAL_ISSUE_DIR)$$dataset; \
+		aws s3 ls s3://$(COLLECTION_DATASET_BUCKET_NAME)
 		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(OPERATIONAL_ISSUE_DIR)$$dataset/operational-issue.csv $(OPERATIONAL_ISSUE_DIR)/$$dataset/operational-issue.csv --no-progress; \
 	done
 endif
