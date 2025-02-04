@@ -193,6 +193,7 @@ else
 	for dataset in $$datasets; do \
 		mkdir -p $(OPERATIONAL_ISSUE_DIR)$$dataset; \
 		url="s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(OPERATIONAL_ISSUE_DIR)$$dataset/operational-issue.csv"; \
+		aws s3 ls $$url; \
         if aws s3 ls $$url > /dev/null 2>&1; then \
             echo "File found at $$url, downloading..."; \
             aws s3 cp $$url $(OPERATIONAL_ISSUE_DIR)/$$dataset/operational-issue.csv --no-progress; \
