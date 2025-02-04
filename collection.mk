@@ -20,8 +20,10 @@ ifeq ($(DATASTORE_URL),)
 DATASTORE_URL=https://files.planning.data.gov.uk/
 endif
 
-ifeq ($(REFILL_TODAYS_LOGS),)
+ifeq ($(REGENERATE_LOG_OVERRIDE),True)
 REFILL_TODAYS_LOGS=false
+else
+REFILL_TODAYS_LOGS=true
 endif
 
 
@@ -80,10 +82,10 @@ second-pass:: collection
 
 collect:: $(COLLECTION_CONFIG_FILES)
 	@mkdir -p $(RESOURCE_DIR)
-	digital-land ${DIGITAL_LAND_OPTS} collect $(ENDPOINT_CSV) --collection-dir $(COLLECTION_DIR)
+	digital-land ${DIGITAL_LAND_OPTS} collect $(ENDPOINT_CSV) --collection-dir $(COLLECTION_DIR) --refill-todays-logs $(REFILL_TODAYS_LOGS)
 
 collection::
-	digital-land ${DIGITAL_LAND_OPTS} collection-save-csv --collection-dir $(COLLECTION_DIR)
+	digital-land ${DIGITAL_LAND_OPTS} collection-save-csv --collection-dir $(COLLECTION_DIR) --refill-todays-logs $(REFILL_TODAYS_LOGS)
 
 clobber-today::
 	rm -rf $(LOG_FILES_TODAY) $(COLLECTION_INDEX)
