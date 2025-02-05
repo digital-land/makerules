@@ -100,7 +100,7 @@ load-logs::
 	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(COLLECTION_DIR)log $(COLLECTION_DIR)log --no-progress
 
 save-resources::
-ifeq ($(INCREMENTAL_LOADING_LOADING_OVERRIDE),True)
+ifeq ($(INCREMENTAL_LOADING_OVERRIDE),True)
 	aws s3 sync $(RESOURCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR) --no-progress
 else
 	aws s3 sync $(RESOURCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR) --size-only --no-progress
