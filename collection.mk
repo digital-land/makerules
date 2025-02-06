@@ -99,6 +99,14 @@ load-resources::
 load-logs::
 	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(COLLECTION_DIR)log $(COLLECTION_DIR)log --no-progress
 
+new-resources-list::
+	echo Determine new resources that have been downloaded
+	aws s3 sync $(RESOURCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR) --dryrun
+	aws s3 sync $(RESOURCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR) --dryrun > new_resources
+	cat new_resources
+
+	exit 0
+
 save-resources::
 ifeq ($(INCREMENTAL_LOADING_OVERRIDE),True)
 	aws s3 sync $(RESOURCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR) --no-progress
