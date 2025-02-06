@@ -101,8 +101,8 @@ load-logs::
 
 new-resources-list::
 	echo Determine new resources that have been downloaded
-	aws s3 sync $(RESOURCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR) --dryrun | awk 'match($3,"^(s3://[^/]+/)(.*)",a) {print a[2]}'
-	aws s3 sync $(RESOURCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR) --dryrun | awk 'match($3,"^(s3://[^/]+/)(.*)",a) {print a[2]}' > new_resources
+	aws s3 sync $(RESOURCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR) --dryrun | grep -oP 'resource/\K[a-f0-9]+'
+	aws s3 sync $(RESOURCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR) --dryrun | grep -oP 'resource/\K[a-f0-9]+' > new_resources
 	cat new_resources
 
 	exit 0
