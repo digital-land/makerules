@@ -106,6 +106,9 @@ load-resources::
 load-logs::
 	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(COLLECTION_DIR)log $(COLLECTION_DIR)log --no-progress
 
+detect-new-resources::
+	aws s3 sync $(RESOURCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR) --dryrun --size-only | { grep -oP 'resource/\K[a-f0-9]+' || true; } > new_resources.txt
+	
 save-resources::
 ifeq ($(INCREMENTAL_LOADING_OVERRIDE),True)
 	aws s3 sync $(RESOURCE_DIR) s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(RESOURCE_DIR) --no-progress
