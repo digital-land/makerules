@@ -72,6 +72,7 @@ else ifeq ($(REGENERATE_LOG_OVERRIDE),True)
 	echo 'Syncing log files to local';
 	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(LOG_DIR) $(LOG_DIR) --only-show-errors;
 else
+	echo 'Downloading log.csv and resource.csv'
 	$(eval LOG_STATUS_CODE := $(shell curl -I -o /dev/null -s -w "%{http_code}" 's3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv'))
 	$(eval RESOURCE_STATUS_CODE := $(shell curl -I -o /dev/null -s -w "%{http_code}" 's3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv'))
 	@if [ $(LOG_STATUS_CODE) -ne 403 ] && [ $(RESOURCE_STATUS_CODE) -ne 403 ]; then \
