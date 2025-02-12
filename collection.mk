@@ -72,8 +72,8 @@ else ifeq ($(REGENERATE_LOG_OVERRIDE),True)
 	echo 'Syncing log files to local';
 	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(LOG_DIR) $(LOG_DIR) --only-show-errors;
 else
-	LOG_STATUS_CODE := $(shell aws s3 ls s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv && echo 200 || echo 404)
-	RESOURCE_STATUS_CODE := $(shell aws s3 ls s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv && echo 200 || echo 404)
+	$(eval LOG_STATUS_CODE := $(shell aws s3 ls s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv && echo 200 || echo 404))
+	$(eval RESOURCE_STATUS_CODE := $(shell aws s3 ls s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv && echo 200 || echo 404))
 	echo 's3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv'
 	echo $(LOG_STATUS_CODE)
 	echo 's3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv'
