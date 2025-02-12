@@ -80,7 +80,7 @@ else
 		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv collection/log.csv --only-show-errors; \
 	else \
 		echo "Could not download log.csv from S3"
-
+	fi
 	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv collection/resource.csv --only-show-errors
 	@if [ $(LOG_STATUS_CODE) -eq 200 ] && [ $(RESOURCE_STATUS_CODE) -eq 200 ]; then \
 		echo 'Downloading log.csv and resource.csv from s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/'; \
