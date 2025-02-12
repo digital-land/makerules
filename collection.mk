@@ -72,15 +72,16 @@ else ifeq ($(REGENERATE_LOG_OVERRIDE),True)
 	echo 'Syncing log files to local';
 	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(LOG_DIR) $(LOG_DIR) --only-show-errors;
 else
-	$(eval LOG_STATUS_CODE := $(shell aws s3 ls s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv && echo 200 || echo 404))
-	$(eval RESOURCE_STATUS_CODE := $(shell aws s3 ls s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv && echo 200 || echo 404))
+	
 	echo 's3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv'
-	echo $(LOG_STATUS_CODE)
 	echo 's3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv'
-	echo $(RESOURCE_STATUS_CODE)
 	echo 'Downloading log.csv and resource.csv from s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/'
-		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv collection/log.csv --only-show-errors
-		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv collection/resource.csv --only-show-errors
+	@if aws s3 ls s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv > /dev/null 2>&1; then \
+		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv collection/log.csv --only-show-errors; \
+	else \
+		echo "Could not download log.csv from S3"
+
+	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv collection/resource.csv --only-show-errors
 	@if [ $(LOG_STATUS_CODE) -eq 200 ] && [ $(RESOURCE_STATUS_CODE) -eq 200 ]; then \
 		echo 'Downloading log.csv and resource.csv from s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/'; \
 		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv collection/log.csv --only-show-errors; \
