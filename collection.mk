@@ -74,6 +74,10 @@ else ifeq ($(REGENERATE_LOG_OVERRIDE),True)
 else
 	$(eval LOG_STATUS_CODE := $(shell curl -I -o /dev/null -s -w "%{http_code}" 's3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv'))
 	$(eval RESOURCE_STATUS_CODE := $(shell curl -I -o /dev/null -s -w "%{http_code}" 's3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv'))
+	echo 's3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv'
+	echo $(LOG_STATUS_CODE)
+	echo 's3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv'
+	echo $(RESOURCE_STATUS_CODE)
 	@if [ $(LOG_STATUS_CODE) -eq 200 ] && [ $(RESOURCE_STATUS_CODE) -eq 200 ]; then \
 		echo 'Downloading log.csv and resource.csv from s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/'; \
 		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv collection/log.csv --only-show-errors; \
