@@ -78,6 +78,9 @@ else
 	echo $(LOG_STATUS_CODE)
 	echo 's3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv'
 	echo $(RESOURCE_STATUS_CODE)
+	echo 'Downloading log.csv and resource.csv from s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/'
+		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv collection/log.csv --only-show-errors
+		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv collection/resource.csv --only-show-errors
 	@if [ $(LOG_STATUS_CODE) -eq 200 ] && [ $(RESOURCE_STATUS_CODE) -eq 200 ]; then \
 		echo 'Downloading log.csv and resource.csv from s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/'; \
 		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv collection/log.csv --only-show-errors; \
