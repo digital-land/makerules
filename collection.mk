@@ -79,7 +79,7 @@ else
 	@if aws s3 ls s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv > /dev/null 2>&1; then \
 		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv collection/log.csv --only-show-errors; \
 	else \
-		echo "Could not download log.csv from S3"
+		echo "Could not download log.csv from S3"; \
 	fi
 	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv collection/resource.csv --only-show-errors
 	@if [ $(LOG_STATUS_CODE) -eq 200 ] && [ $(RESOURCE_STATUS_CODE) -eq 200 ]; then \
