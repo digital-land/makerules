@@ -121,7 +121,7 @@ endif
 
 define run-pipeline
 	mkdir -p $(@D) $(ISSUE_DIR)$(notdir $(@D)) $(OPERATIONAL_ISSUE_DIR) $(OUTPUT_LOG_DIR) $(COLUMN_FIELD_DIR)$(notdir $(@D)) $(DATASET_RESOURCE_DIR)$(notdir $(@D)) $(CONVERTED_RESOURCE_DIR)$(notdir $(@D))
-	digital-land ${DIGITAL_LAND_OPTS} --dataset $(notdir $(@D)) --pipeline-dir $(PIPELINE_DIR) $(DIGITAL_LAND_FLAGS) pipeline $(1) --issue-dir $(ISSUE_DIR)$(notdir $(@D)) --column-field-dir $(COLUMN_FIELD_DIR)$(notdir $(@D)) --dataset-resource-dir $(DATASET_RESOURCE_DIR)$(notdir $(@D)) --converted-resource-dir $(CONVERTED_RESOURCE_DIR)$(notdir $(@D)) --config-path $(CACHE_DIR)config.sqlite3 --organisation-path $(CACHE_DIR)organisation.csv $(PIPELINE_FLAGS) $< $@
+	digital-land ${DIGITAL_LAND_OPTS} --dataset $(notdir $(@D)) --pipeline-dir $(PIPELINE_DIR) $(DIGITAL_LAND_FLAGS) pipeline $(1) --issue-dir $(ISSUE_DIR)$(notdir $(@D)) --column-field-dir $(COLUMN_FIELD_DIR)$(notdir $(@D)) --dataset-resource-dir $(DATASET_RESOURCE_DIR)$(notdir $(@D)) --converted-resource-dir $(CONVERTED_RESOURCE_DIR)$(notdir $(@D)) --config-path $(CACHE_DIR)config.sqlite3 --organisation-path $(CACHE_DIR)organisation.csv --provision-summary-dir $(CACHE_DIR)provision_summary $(PIPELINE_FLAGS) $< $@
 endef
 
 define build-dataset =
