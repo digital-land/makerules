@@ -40,7 +40,7 @@ DATASETTE_URL=https://datasette.planning.data.gov.uk/
 endif
 
 ifeq ($(DOCUMENT_DATASET),)
-DATASET := $(notdir $(VAR_DIR))
+DOCUMENT_DATASET := $(notdir $(VAR_DIR))
 endif
 
 .PHONY: \
