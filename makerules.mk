@@ -158,7 +158,7 @@ else
 endif
 
 $(CACHE_DIR)provision_summary.csv:
-	curl -qfs "$(DATASETTE_URL)performance.csv?sql=select%20organisation%2C%20dataset%2C%20active_endpoint_count%20from%20provision_summary%20where%20active_endpoint_count%20%3E%200%20order%20by%20organisation%3B&_size=max" > $(CACHE_DIR)provision_summary.csv
+	curl -v "$(DATASETTE_URL)performance.csv?sql=select%20organisation%2C%20dataset%2C%20active_endpoint_count%20from%20provision_summary%20where%20active_endpoint_count%20%3E%200%20order%20by%20organisation%3B&_size=max" > $(CACHE_DIR)provision_summary.csv
 
 init:: config
 
