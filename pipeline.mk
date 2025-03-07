@@ -151,7 +151,7 @@ define update-dataset =
 endef
 
 collection::
-	digital-land ${DIGITAL_LAND_OPTS} collection-pipeline-makerules --collection-dir $(COLLECTION_DIR) > $(COLLECTION_DIR)pipeline.mk
+	digital-land ${DIGITAL_LAND_OPTS} collection-pipeline-makerules --collection-dir $(COLLECTION_DIR) --state-difference-path state_difference.json > $(COLLECTION_DIR)pipeline.mk
 
 -include $(COLLECTION_DIR)pipeline.mk
 
