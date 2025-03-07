@@ -287,7 +287,7 @@ clean::
 	rm -f $(PIPELINE_CONFIG_FILES)
 
 state.json:
-	digital-land save-state --specification-dir=specification --collection-dir=$(COLLECTION_DIR) --pipeline-dir=$(PIPELINE_DIR) --resource-dir=$(COLLECTION_DIR)resource/ --incremental-override=$(INCREMENTAL_LOADING_OVERRIDE) --output-path=state.json
+	digital-land save-state --specification-dir=specification --collection-dir=$(COLLECTION_DIR) --pipeline-dir=$(PIPELINE_DIR) --resource-dir=$(COLLECTION_DIR)resource/ --incremental-loading-override=$(INCREMENTAL_LOADING_OVERRIDE) --output-path=state.json
 
 save-state:: state.json
 	aws s3 cp state.json s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/state.json --no-progress
