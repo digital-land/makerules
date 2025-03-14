@@ -20,7 +20,7 @@ DATASTORE_URL=https://files.planning.data.gov.uk/
 endif
 
 ifeq ($(CONFIG_URL),)
-CONFIG_URL=$(DATASTORE_URL)config/fix-FRZ
+CONFIG_URL=$(DATASTORE_URL)config/fix-FRZ/
 endif
 
 ifeq ($(COLLECTION_NAME),)
