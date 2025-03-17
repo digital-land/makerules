@@ -73,13 +73,13 @@ else ifeq ($(REGENERATE_LOG_OVERRIDE),True)
 	aws s3 sync s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(LOG_DIR) $(LOG_DIR) --only-show-errors;
 else
 	echo 'Downloading log.csv and resource.csv from s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/'
-	@if aws s3 ls s3://production-collection-data/$(REPOSITORY)/collection/log.csv > /dev/null 2>&1; then \
-		aws s3 cp s3://production-collection-data/$(REPOSITORY)/collection/log.csv collection/log.csv; \
+	@if aws s3 ls s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv > /dev/null 2>&1; then \
+		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/log.csv collection/log.csv; \
 	else \
 		echo "Could not download log.csv from S3"; \
 	fi
-	@if aws s3 ls s3://production-collection-data/$(REPOSITORY)/collection/resource.csv > /dev/null 2>&1; then \
-		aws s3 cp s3://production-collection-data/$(REPOSITORY)/collection/resource.csv collection/resource.csv; \
+	@if aws s3 ls s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv > /dev/null 2>&1; then \
+		aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/collection/resource.csv collection/resource.csv; \
 	else \
 		echo "Could not download resource.csv from S3"; \
 	fi
