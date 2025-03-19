@@ -150,9 +150,9 @@ define update-dataset =
 	# Merge existing issues with new issues
 	# Check if file does not exist or is empty (if empty cannot merge with newer issues)
 	if [ -s $(basename $@)-issue.csv ]; then
-        csvstack $(basename $@)-issue.csv $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv
+		csvstack $(basename $@)-issue.csv $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv
     else
-        csvstack $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv
+		csvstack $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv
     fi
 	mv $(basename $@)-issue-updated.csv $(basename $@)-issue.csv
 	time digital-land ${DIGITAL_LAND_OPTS} expectations-dataset-checkpoint --dataset $(notdir $(basename $@)) --file-path $(basename $@).sqlite3  --log-dir=$(OUTPUT_LOG_DIR) --configuration-path $(CACHE_DIR)config.sqlite3 --organisation-path $(CACHE_DIR)organisation.csv --specification-dir $(SPECIFICATION_DIR)
