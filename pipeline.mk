@@ -147,9 +147,9 @@ define update-dataset =
 	md5sum $@ $(basename $@).sqlite3
 	# Get existing issue file from S3 (if it does not exist then do not error, hence "|| true" at the end)
 	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(ISSUE_DIR)/$(basename $@)-issue.csv $(basename $@)-issue.csv || true
-	# Merge existing issues with new issues
 	# Check if file does not exist or is empty (if empty cannot merge with newer issues)
 	if [ -s $(basename $@)-issue.csv ]; then
+		# Merge existing issues with new issues
 		csvstack $(basename $@)-issue.csv $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv
 	else
 		csvstack $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv
