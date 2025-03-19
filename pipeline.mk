@@ -145,11 +145,15 @@ define update-dataset =
 	mkdir -p $(FLATTENED_DIR)
 	time digital-land ${DIGITAL_LAND_OPTS} --dataset $(notdir $(basename $@)) --pipeline-dir $(PIPELINE_DIR) dataset-entries-flattened $@ $(FLATTENED_DIR)
 	md5sum $@ $(basename $@).sqlite3
-	# Get existing issue file from S3 (or create one if it does not exist)
-	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(ISSUE_DIR)/$(basename $@)-issue.csv $(basename $@)-issue.csv || touch $(basename $@)-issue.csv
+	# Get existing issue file from S3 (if it does not exist then do not error, hence "|| true" at the end)
+	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(ISSUE_DIR)/$(basename $@)-issue.csv $(basename $@)-issue.csv || true
 	# Merge existing issues with new issues
-	csvstack $(basename $@)-issue.csv $(ISSUE_DIR)$(notdir $(basename $@))/*.csv > $(basename $@)-issue-updated.csv
-	# Replace the old issue file
+	# Check if file does not exist or is empty (if empty cannot merge with newer issues)
+	if [ -s $(basename $@)-issue.csv ]; then
+        csvstack $(basename $@)-issue.csv $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv
+    else
+        csvstack $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv
+    fi
 	mv $(basename $@)-issue-updated.csv $(basename $@)-issue.csv
 	time digital-land ${DIGITAL_LAND_OPTS} expectations-dataset-checkpoint --dataset $(notdir $(basename $@)) --file-path $(basename $@).sqlite3  --log-dir=$(OUTPUT_LOG_DIR) --configuration-path $(CACHE_DIR)config.sqlite3 --organisation-path $(CACHE_DIR)organisation.csv --specification-dir $(SPECIFICATION_DIR)
 	time digital-land ${DIGITAL_LAND_OPTS} --dataset $(notdir $(basename $@)) operational-issue-save-csv --operational-issue-dir $(OPERATIONAL_ISSUE_DIR)
