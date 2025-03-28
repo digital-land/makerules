@@ -164,6 +164,8 @@ define update-dataset =
 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/
 	echo "issue"
 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue/
+	echo "issue/tree"
+	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue/tree/
 	echo "dataset"
 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue/dataset/
 	echo "Does file exist2"
