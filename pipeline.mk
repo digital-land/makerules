@@ -140,11 +140,6 @@ endef
 
 define update-dataset =
 	echo "In update-dataset"
-    echo "basename"
-    echo $@ $(basename $@)
-    echo "issue dir"
-    echo $(ISSUE_DIR)
-    echo $(ISSUE_DIR)$(notdir $(basename $@))/*.csv
 	mkdir -p $(@D)
 	echo "Running dataset-update with info from bucket-name $(COLLECTION_DATASET_BUCKET_NAME)"
 	echo "time digital-land ${DIGITAL_LAND_OPTS} --dataset $(notdir $(basename $@)) --pipeline-dir $(PIPELINE_DIR) dataset-update --output-path $(basename $@).sqlite3 --organisation-path $(CACHE_DIR)organisation.csv --issue-dir $(ISSUE_DIR) --column-field-dir=$(COLUMN_FIELD_DIR) --dataset-resource-dir $(DATASET_RESOURCE_DIR) --resource-path $(COLLECTION_DIR)resource.csv --cache-dir $(CACHE_DIR) $ $(^) --bucket-name $(COLLECTION_DATASET_BUCKET_NAME) --repository $(REPOSITORY)"
@@ -155,23 +150,9 @@ define update-dataset =
 	time digital-land ${DIGITAL_LAND_OPTS} --dataset $(notdir $(basename $@)) --pipeline-dir $(PIPELINE_DIR) dataset-entries-flattened $@ $(FLATTENED_DIR)
 	md5sum $@ $(basename $@).sqlite3
 	# Get existing issue file from S3 (if it does not exist then do not error, hence "|| true" at the end)
-	echo "s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(ISSUE_DIR)/$(basename $@)-issue.csv"
-	echo "$(basename $@)"
-	echo "$(basename $@)-issue.csv"
 	echo issue_dir
 	echo "$(ISSUE_DIR)"
-# 	echo "Does file exist1"
-# 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/ --recursive | grep "tree-issue.csv"
-# 	echo "Collection"
-# 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/
-# 	echo "issue"
-# 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue/
 	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(basename $@)-issue.csv $(basename $@)-issue.csv || true
-	ls $(basename $@)-issue.csv
-	echo "ls issue dir"
-	ls "$(ISSUE_DIR)"
-	echo "ls issue dirnotdir"
-	ls $(ISSUE_DIR)$(notdir $(basename $@))/*.csv
 	# Check if file does not exist or is empty (if empty cannot merge with newer issues)
 	echo "Using bash explicitly"
 	# The above `aws s3 cp` command will copy over all issue files, though we may not need all of them, especially if a
