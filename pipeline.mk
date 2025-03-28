@@ -160,6 +160,11 @@ define update-dataset =
 	echo "$(basename $@)-issue.csv"
 	echo "$(ISSUE_DIR)"
 	echo "Does file exist1"
+	echo "Collection"
+	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/
+	echo "issue"
+	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue/
+	echo "dataset"
 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue/dataset/
 	echo "Does file exist2"
 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue//dataset/
