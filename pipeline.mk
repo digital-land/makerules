@@ -179,7 +179,8 @@ define update-dataset =
 	bash -c ' \
         echo "Checking directory: $(ISSUE_DIR)$(notdir $(basename $@))"; \
 	    if [ -d "$(ISSUE_DIR)$(notdir $(basename $@))" ]; then \
-    	    if [ -s "$(basename $@)-issue.csv" ]; then \
+            echo "Directory exists, proceeding..."; \
+            if [ -s "$(basename $@)-issue.csv" ]; then \
 	            csvstack "$(basename $@)-issue.csv" $(ISSUE_DIR)$(notdir $(basename $@))/*.csv > "$(basename $@)-issue-updated.csv"; \
 	        else \
 	            csvstack $(ISSUE_DIR)$(notdir $(basename $@))/*.csv > "$(basename $@)-issue-updated.csv"; \
