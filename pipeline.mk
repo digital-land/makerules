@@ -177,6 +177,7 @@ define update-dataset =
 	# The above `aws s3 cp` command will copy over all issue files, though we may not need all of them, especially if a
 	# collection has no new resources, so check if the folder exists (it should do if we need to process)
 	bash -c ' \
+        echo "Checking directory: $(ISSUE_DIR)$(notdir $(basename $@))"; \
 	    if [ -d "$(ISSUE_DIR)$(notdir $(basename $@))" ]; then \
     	    if [ -s "$(basename $@)-issue.csv" ]; then \
 	            csvstack "$(basename $@)-issue.csv" $(ISSUE_DIR)$(notdir $(basename $@))/*.csv > "$(basename $@)-issue-updated.csv"; \
