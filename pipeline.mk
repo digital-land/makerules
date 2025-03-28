@@ -182,7 +182,7 @@ define update-dataset =
 	            csvstack "$(basename $@)-issue.csv" $(ISSUE_DIR)$(notdir $(basename $@))/*.csv > "$(basename $@)-issue-updated.csv"; \
 	        else \
 	            csvstack $(ISSUE_DIR)$(notdir $(basename $@))/*.csv > "$(basename $@)-issue-updated.csv"; \
-	        fi \
+	        fi; \
         	mv $(basename $@)-issue-updated.csv $(basename $@)-issue.csv; \
         else \
             echo No new resources in "$(ISSUE_DIR)$(notdir $(basename $@))" so do not process.; \
