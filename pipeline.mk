@@ -168,14 +168,17 @@ define update-dataset =
 # 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue/
 	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(basename $@)-issue.csv $(basename $@)-issue.csv || true
 	ls $(basename $@)-issue.csv
+	echo "ls issue dir"
 	ls "$(ISSUE_DIR)"
+	echo "ls issue dirnotdir"
+	ls $(ISSUE_DIR)$(notdir $(basename $@))/*.csv
 	# Check if file does not exist or is empty (if empty cannot merge with newer issues)
 	echo "Using bash explicitly"
 	bash -c ' \
 	    if [ -s "$(basename $@)-issue.csv" ]; then \
-	        csvstack "$(basename $@)-issue.csv" "$(ISSUE_DIR)"/*.csv > "$(basename $@)-issue-updated.csv"; \
+	        csvstack "$(basename $@)-issue.csv" $(ISSUE_DIR)$(notdir $(basename $@))/*.csv > "$(basename $@)-issue-updated.csv"; \
 	    else \
-	        csvstack "$(ISSUE_DIR)"/*.csv > "$(basename $@)-issue-updated.csv"; \
+	        csvstack $(ISSUE_DIR)$(notdir $(basename $@))/*.csv > "$(basename $@)-issue-updated.csv"; \
 	    fi \
 	'
 	mv $(basename $@)-issue-updated.csv $(basename $@)-issue.csv
