@@ -173,7 +173,7 @@ define update-dataset =
 		    csvstack $(basename $@)-issue.csv $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv; \
 	    else \
 		    csvstack $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv; \
-	    fi \
+	    fi; \
 	}
 	# Check if file does not exist or is empty (if empty cannot merge with newer issues)
 	mv $(basename $@)-issue-updated.csv $(basename $@)-issue.csv
