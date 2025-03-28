@@ -159,19 +159,19 @@ define update-dataset =
 	echo "$(basename $@)"
 	echo "$(basename $@)-issue.csv"
 	echo "$(ISSUE_DIR)"
-	echo "Does file exist1"
-	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/ --recursive | grep "tree-issue.csv"
-	echo "Collection"
-	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/
-	echo "issue"
-	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue/
+# 	echo "Does file exist1"
+# 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/ --recursive | grep "tree-issue.csv"
+# 	echo "Collection"
+# 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/
+# 	echo "issue"
+# 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue/
 	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(basename $@)-issue.csv $(basename $@)-issue.csv || true
 	# Check if file does not exist or is empty (if empty cannot merge with newer issues)
-	if [ -s $(basename $@)-issue.csv ]; then
+	if [ -s $(basename $@)-issue.csv ]; then \
 		# Merge existing issues with new issues
-		csvstack $(basename $@)-issue.csv $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv
-	else
-		csvstack $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv
+		csvstack $(basename $@)-issue.csv $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv \
+	else \
+		csvstack $(ISSUE_DIR)/*.csv > $(basename $@)-issue-updated.csv \
 	fi
 	mv $(basename $@)-issue-updated.csv $(basename $@)-issue.csv
 	time digital-land ${DIGITAL_LAND_OPTS} expectations-dataset-checkpoint --dataset $(notdir $(basename $@)) --file-path $(basename $@).sqlite3  --log-dir=$(OUTPUT_LOG_DIR) --configuration-path $(CACHE_DIR)config.sqlite3 --organisation-path $(CACHE_DIR)organisation.csv --specification-dir $(SPECIFICATION_DIR)
