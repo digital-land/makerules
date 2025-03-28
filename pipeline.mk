@@ -158,6 +158,7 @@ define update-dataset =
 	echo "s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(ISSUE_DIR)/$(basename $@)-issue.csv"
 	echo "$(basename $@)"
 	echo "$(basename $@)-issue.csv"
+	echo issue_dir
 	echo "$(ISSUE_DIR)"
 # 	echo "Does file exist1"
 # 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/ --recursive | grep "tree-issue.csv"
@@ -166,6 +167,8 @@ define update-dataset =
 # 	echo "issue"
 # 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue/
 	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(basename $@)-issue.csv $(basename $@)-issue.csv || true
+	ls $(basename $@)-issue.csv
+	ls "$(ISSUE_DIR)"
 	# Check if file does not exist or is empty (if empty cannot merge with newer issues)
 	echo "Using bash explicitly"
 	bash -c ' \
