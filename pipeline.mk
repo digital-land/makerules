@@ -165,10 +165,6 @@ define update-dataset =
 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/
 	echo "issue"
 	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue/
-	echo "dataset"
-	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue/dataset/
-	echo "Does file exist2"
-	aws s3 ls s3://development-collection-data/tree-preservation-order-collection/issue//dataset/
 	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(ISSUE_DIR)/$(basename $@)-issue.csv $(basename $@)-issue.csv || true
 	# Check if file does not exist or is empty (if empty cannot merge with newer issues)
 	if [ -s $(basename $@)-issue.csv ]; then
