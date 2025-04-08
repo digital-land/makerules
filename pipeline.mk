@@ -142,7 +142,6 @@ define update-dataset =
 	echo "In update-dataset"
 	mkdir -p $(@D)
 	echo "Running dataset-update with info from bucket-name $(COLLECTION_DATASET_BUCKET_NAME)"
-	echo "time digital-land ${DIGITAL_LAND_OPTS} --dataset $(notdir $(basename $@)) --pipeline-dir $(PIPELINE_DIR) dataset-update --output-path $(basename $@).sqlite3 --organisation-path $(CACHE_DIR)organisation.csv --issue-dir $(ISSUE_DIR) --column-field-dir=$(COLUMN_FIELD_DIR) --dataset-resource-dir $(DATASET_RESOURCE_DIR) --resource-path $(COLLECTION_DIR)resource.csv --cache-dir $(CACHE_DIR) $ $(^) --bucket-name $(COLLECTION_DATASET_BUCKET_NAME) --repository $(REPOSITORY)"
 	time digital-land ${DIGITAL_LAND_OPTS} --dataset $(notdir $(basename $@)) --pipeline-dir $(PIPELINE_DIR) dataset-update --output-path $(basename $@).sqlite3 --organisation-path $(CACHE_DIR)organisation.csv --issue-dir $(ISSUE_DIR) --column-field-dir=$(COLUMN_FIELD_DIR) --dataset-resource-dir $(DATASET_RESOURCE_DIR) --resource-path $(COLLECTION_DIR)resource.csv --cache-dir $(CACHE_DIR) $ $(^) --bucket-name $(COLLECTION_DATASET_BUCKET_NAME) --repository $(REPOSITORY)
 	time datasette inspect $(basename $@).sqlite3 --inspect-file=$(basename $@).sqlite3.json
 	time digital-land ${DIGITAL_LAND_OPTS} --dataset $(notdir $(basename $@)) --pipeline-dir $(PIPELINE_DIR) dataset-entries $(basename $@).sqlite3 $@
@@ -150,17 +149,14 @@ define update-dataset =
 	time digital-land ${DIGITAL_LAND_OPTS} --dataset $(notdir $(basename $@)) --pipeline-dir $(PIPELINE_DIR) dataset-entries-flattened $@ $(FLATTENED_DIR)
 	md5sum $@ $(basename $@).sqlite3
 	# Get existing issue file from S3 (if it does not exist then do not error, hence "|| true" at the end)
-	echo issue_dir
-	echo "$(ISSUE_DIR)"
 	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/$(REPOSITORY)/$(basename $@)-issue.csv $(basename $@)-issue.csv || true
-	# Check if file does not exist or is empty (if empty cannot merge with newer issues)
-	echo "Using bash explicitly"
 	# The above `aws s3 cp` command will copy over all issue files, though we may not need all of them, especially if a
 	# collection has no new resources, so check if the folder exists (it should do if we need to process)
+	# Using bash explicitly
 	bash -c ' \
         echo "Checking directory: $(ISSUE_DIR)$(notdir $(basename $@))"; \
 	    if [ -d "$(ISSUE_DIR)$(notdir $(basename $@))" ]; then \
-            echo "Directory exists, proceeding..."; \
+        	# Check if file does not exist or is empty (if empty cannot merge with newer issues)
             if [ -s "$(basename $@)-issue.csv" ]; then \
 	            csvstack "$(basename $@)-issue.csv" $(ISSUE_DIR)$(notdir $(basename $@))/*.csv > "$(basename $@)-issue-updated.csv"; \
 	        else \
