@@ -35,6 +35,7 @@ ifeq ($(CACHE_DIR),)
 CACHE_DIR=$(VAR_DIR)cache/
 endif
 
+timestamp := $(shell date --utc +%s)
 
 .PHONY: \
 	makerules\
@@ -152,7 +153,7 @@ $(CACHE_DIR)organisation.csv:
 ifneq ($(COLLECTION_DATASET_BUCKET_NAME),)
 	aws s3 cp s3://$(COLLECTION_DATASET_BUCKET_NAME)/organisation-collection/dataset/organisation.csv $(CACHE_DIR)organisation.csv
 else
-	curl -qfs "$(DATASTORE_URL)organisation-collection/dataset/organisation.csv" > $(CACHE_DIR)organisation.csv
+	curl -qfs "$(DATASTORE_URL)organisation-collection/dataset/organisation.csv?version=$(timestamp)"" > $(CACHE_DIR)organisation.csv
 endif
 
 init:: config
